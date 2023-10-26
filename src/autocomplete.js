@@ -65,4 +65,4 @@ setInterval(() => {
 	else {
 		p.style.color = '#00000066'
 	}
-}, 1);
+}, 5);
