@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>JavaScript Starter Project</title>
+			<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+		<link rel="stylesheet" type="text/css" href="https://unpkg.com/azheda-utils-v2@latest/Client/_css/grid.css"/>
+		<link rel="stylesheet" type="text/css" href="main.css"/>
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+		<script src="https://unpkg.com/azheda-utils-v2@latest/Client/SpeechRecognition/speechRecognition.js"></script>
+		<script src="https://unpkg.com/sweetalert@2.1.2/dist/sweetalert.min.js"></script>
+	</head>
+	<body>
+
+		<div class="container-fluid" id="ai-search">
+			<form method="POST" class="form-group" id="input-form">
+				<div class="mygrid-row">
+					<div class="input-group mygrid-17"></div>
+					<div class="input-group mygrid-8">
+						<button class="input-group-text w100 textCenter" id="speechRecognition">Ricerca vocale</button>
+					</div>
+					<div class="input-group mygrid-70">
+						<div class="placeholder w100" data-placeholder="Chiedi qualcosa a HeySeac" id="autoCompletePlaceholder">
+							<input type="text" class="form-control w100" id="searchbar" autocomplete="off" tab-index="-1" />
+						</div>
+					</div>
+					<div class="input-group mygrid-8">
+						<input type="hidden" class="form-control metadata" id="metadata-chart" />
+						<input type="hidden" class="form-control metadata" id="metadata-table" />
+						<button class="input-group-text w100 textCenter" id="confirm-form">Cerca</button>
+					</div>
+					<div class="input-group mygrid-17"></div>
+				</div>
+			</form>
+		</div>
+		<script>
+			function dragstartHandler(ev) {
+				// Add the target element's id to the data transfer object
+				ev.dataTransfer.setData("application/my-app", ev.target.id);
+				ev.dataTransfer.effectAllowed = "move";
+			}
+			function dragoverHandler(ev) {
+				ev.preventDefault();
+				ev.dataTransfer.dropEffect = "move";
+			}
+			function dropHandler(ev) {
+				ev.preventDefault();
+				// Get the id of the target and add the moved element to the target's DOM
+				const data = ev.dataTransfer.getData("application/my-app");
+				ev.target.appendChild(document.getElementById(data));
+			}
+			</script>
+			
+			<p id="p1" draggable="true" ondragstart="dragstartHandler(event)">This element is draggable.</p>
+			<div id="target" style="width: 200px; height: 200px; background-color: #FFAA00;" ondrop="dropHandler(event)" ondragover="dragoverHandler(event)"> Drop Zone </div>
+
+			<div id="chart-1"></div>
+			<div id="chart-2"></div>
+			<script src="bundle.js" type="module"></script>
+	</body>
+</html>
