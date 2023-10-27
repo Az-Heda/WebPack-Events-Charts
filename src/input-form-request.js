@@ -26,8 +26,6 @@ function get_SR_Html() {
 	return container;
 }
 
-
-
 async function sendFetch(data, isLocal) {
 	const url = (!isLocal) ? 'http://10.160.6.11:7890/ask' : `${document.location.protocol}//${document.location.host}/ask`
 
@@ -50,6 +48,7 @@ function showTable(result) {
 	let { data, error } = result;
 	if (error) {
 		console.error('SERVER ERROR', error)
+		swal({ icon: 'error', text: error, title: 'Server error'})
 		return null;
 	}
 	console.log({
