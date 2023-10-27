@@ -1,6 +1,7 @@
 {
     "scripts": {
-        "build": "webpack"
+        "build": "webpack",
+		"watch": "webpack --watch"
     },
     "dependencies": {
         "apexcharts": "^3.44.0",

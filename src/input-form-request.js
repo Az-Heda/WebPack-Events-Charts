@@ -1,8 +1,8 @@
 export function sendRequest(evt) {
 	const inputTag = document.getElementById('searchbar');
-	const param = { value: inputTag.value };
+	const param = { question: inputTag.value };
 	console.log(param);
-	sendFetch(param)
+	sendFetch(param, false)
 }
 
 
@@ -28,8 +28,9 @@ function get_SR_Html() {
 
 
 
-async function sendFetch(data) {
-	const url = `${document.location.protocol}//${document.location.host}/ask`;
+async function sendFetch(data, isLocal) {
+	const url = (!isLocal) ? 'http://10.160.6.11:7890/ask' : `${document.location.protocol}//${document.location.host}/ask`
+
 	return new Promise(async (resolve) => {
 		let options = {
 			method: 'POST',
@@ -40,9 +41,40 @@ async function sendFetch(data) {
 		};
 		const res = await fetch(url, options).catch(console.error);
 		const resJSON = await res.json().catch(console.error);
-		console.log({ resJSON })
+		MyEvent.emit('table-from-fetch', resJSON);
 		resolve(resJSON);
 	})
+}
+
+function showTable(result) {
+	let { data, error } = result;
+	if (error) {
+		console.error('SERVER ERROR', error)
+		return null;
+	}
+	console.log({
+		data,
+		result,
+		searched: document.getElementById('searchbar').value
+	})
+	// data = data.filter((itme))
+	let labels = Object.entries(data[0]).map((i) => { return i[0] });
+	let values = data.map((i) => { return Object.entries(i).map((e) => { return e[1] }) })
+	console.log({ labels, values })
+	const container = document.getElementById('table');
+	container.innerHTML = '';
+
+	const options = {
+		columns: [ ...labels ],
+		data: [ ...values ],
+		search: true,
+		resizable: true,
+		pagination: true,
+		fixedHeader: true,
+	}
+
+	let table = new gridjs.Grid(options);
+	table.render(container);
 }
 
 //-----------------------------------------------------\\
@@ -62,9 +94,9 @@ form.addEventListener('submit', function(event) {
 });
 
 btns.voice.addEventListener('click', function(event) {
+	console.log(event);
 	event.preventDefault();
-	swal({ closeOnEsc: true, closeOnClickOutside: true, buttons: false, content: get_SR_Html() })
-	.then(() => { sr.sr.stop(); });
+	swal({ closeOnEsc: true, closeOnClickOutside: true, buttons: false, content: get_SR_Html() }).then(() => { sr.sr.stop(); });
 	sr.start();
 	console.warn('CONSOLE.WARN', 'Funziona!');
 });
@@ -73,3 +105,9 @@ btns.send.addEventListener('click', function(event) {
 	event.preventDefault();
 	sendRequest(event);
 });
+
+
+MyEvent.bind('table', 'table-from-fetch', showTable);
+// setTimeout(() => {
+// 	document.getElementById('searchbar').value = 'how many different regions are there';
+// }, 1000);

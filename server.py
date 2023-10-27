@@ -24,6 +24,10 @@ CORS(app)
 staticDir : Final = './dist'
 app.static('/website', staticDir, name='dist')
 
+@app.route('/', methods=['GET'])
+def homepage(req : Request):
+	return response.redirect('/website/index.html')
+
 @app.route('/ask', methods=['POST'])
 def ask(req : Request):
 	df = pd.read_sql(open('query.sql', 'r').read(), conn)

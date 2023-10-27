@@ -13,13 +13,13 @@ export class Chart {
             { a: 12, b: 30 },
         ]
 
-        element.addEventListener(
-            'line', () => { this.line(element) }
-        )
+        // element.addEventListener(
+        //     'line', () => { this.line(element) }
+        // )
 
-        element.addEventListener(
-            'area', () => { this.area(element) }
-        )
+        // element.addEventListener(
+        //     'area', () => { this.area(element) }
+        // )
     }
 
     async line(element) {

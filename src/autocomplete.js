@@ -54,15 +54,18 @@ export function autoComplete(event, tag) {
 
 let p = document.getElementById('autoCompletePlaceholder');
 let c = document.getElementById('searchbar');
+const currentPlaceholder = p.getAttribute('data-placeholder');
 
-c.addEventListener('keypress', function(event) { autoComplete(event, c); });
-c.addEventListener('keydown', function(event) { autoComplete(event, c); });
+// c.addEventListener('keypress', function(event) { autoComplete(event, c); });
+// c.addEventListener('keydown', function(event) { autoComplete(event, c); });
 
 setInterval(() => {
-	if (p.getAttribute('data-placeholder') == c.value || c.value.length == 0) {
-		p.style.color = 'transparent';
+	// if (p.getAttribute('data-placeholder') == c.value || c.value.length == 0) { p.style.color = 'transparent'; }
+	// else { p.style.color = '#00000066' }
+	if (c.value.length > 0) {
+		p.setAttribute('data-placeholder', '');
 	}
 	else {
-		p.style.color = '#00000066'
+		p.setAttribute('data-placeholder', currentPlaceholder);
 	}
 }, 5);

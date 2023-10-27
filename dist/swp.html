@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>Document</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="https://unpkg.com/azheda-utils-v2@latest/Client/_css/grid.css"/>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+		<script src="https://unpkg.com/azheda-utils-v2@1.0.2/Client/Swap/swap.js"></script>
+		<script>
+			$(document).ready(() => {
+				const elements = Array.from($('.mygrid-20'))
+				elements.forEach((e, _) => {
+					Swappable.add(e)
+				})
+			})
+		</script>
+	</head>
+	<body>
+		<div class="mygrid-row">
+			<div class="mygrid-20" id="color-FA0" draggable="true" style="height: 100px; background-color: #FA0" swap-group="1">1</div>
+			<div class="mygrid-20" id="color-F0A" draggable="true" style="height: 100px; background-color: #F0A" swap-group="1">2</div>
+			<div class="mygrid-20" id="color-AF0" draggable="true" style="height: 100px; background-color: #AF0" swap-group="1">3</div>
+			<div class="mygrid-20" id="color-A0F" draggable="true" style="height: 100px; background-color: #A0F" swap-group="1">4</div>
+			<div class="mygrid-20" id="color-0AF" draggable="true" style="height: 100px; background-color: #0AF" swap-group="1">5</div>
+			<div class="mygrid-20" id="color-0FA" draggable="true" style="height: 100px; background-color: #0FA" swap-group="1">6</div>
+		</div>
+		<div class="mygrid-row">
+			<div class="mygrid-20" id="color-222" draggable="true" style="height: 100px; background-color: #222" swap-group="2">1</div>
+			<div class="mygrid-20" id="color-444" draggable="true" style="height: 100px; background-color: #444" swap-group="2">2</div>
+			<div class="mygrid-20" id="color-666" draggable="true" style="height: 100px; background-color: #666" swap-group="2">3</div>
+			<div class="mygrid-20" id="color-888" draggable="true" style="height: 100px; background-color: #888" swap-group="2">4</div>
+			<div class="mygrid-20" id="color-Aaa" draggable="true" style="height: 100px; background-color: #Aaa" swap-group="2">5</div>
+			<div class="mygrid-20" id="color-ddd" draggable="true" style="height: 100px; background-color: #ddd" swap-group="2">6</div>
+		</div>
+	</body>
+</html>
+
+
+
+
+
+
