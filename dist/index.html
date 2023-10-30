@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
 		<title>JavaScript Starter Project</title>
 			<meta charset="UTF-8" />
@@ -15,6 +15,7 @@
 		<script src="https://unpkg.com/azheda-utils-v2@latest/Client/SpeechRecognition/speechRecognition.js"></script>
 		<script src="https://unpkg.com/azheda-utils-v2@latest/Client/Swap/swap.js"></script>
 		<script src="https://unpkg.com/azheda-utils-v2@latest/Client/Event/event.js"></script>
+		<!-- <script src="https://unpkg.com/azheda-utils-v2@latest/Client/Utils/utils.js"></script> -->
 		<script src="https://unpkg.com/sweetalert@2.1.2/dist/sweetalert.min.js"></script>
 		<script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
 	</head>
@@ -28,25 +29,95 @@
 					<div class="input-group mygrid-8">
 						<button class="input-group-text w100 textCenter" id="speechRecognition">Ricerca vocale</button>
 					</div>
+					<!-- <div class="input-group mygrid-1"></div> -->
 					<div class="input-group mygrid-70">
 						<div class="placeholder w100" data-placeholder="Chiedi qualcosa a HeySeac" id="autoCompletePlaceholder">
-							<input type="text" class="form-control w100" id="searchbar" autocomplete="off" tab-index="-1"/>
+							<input type="text" class="form-control w100" id="searchbar" autocomplete="off" tab-index="-1" value="count all different call groups"/>
 						</div>
 					</div>
+					<!-- <div class="input-group mygrid-1"></div> -->
 					<div class="input-group mygrid-8">
 						<input type="hidden" class="form-control metadata" id="metadata-chart" />
 						<input type="hidden" class="form-control metadata" id="metadata-table" />
 						<button class="input-group-text w100 textCenter" id="confirm-form">Cerca</button>
 					</div>
-					<div class="input-group mygrid-17"></div>
+					<!-- <div class="input-group mygrid-16"></div> -->
 				</div>
 			</form>
 		</div>
 		<div class="mygrid-row">
 			<div class="mygrid-20"></div>
-			<div class="mygrid-80" id="table"></div>
+			<div class="mygrid-80" id="query"></div>
 			<div class="mygrid-20"></div>
 		</div>
+		<div class="mygrid-row">
+			<div class="mygrid-20"></div>
+			<div class="mygrid-80" id="output"></div>
+			<div class="mygrid-20"></div>
+		</div>
+		<!-- <div class="mygrid-row">
+			<div class="mygrid-20"></div>
+			<div class="mygrid-80" id="test-chart"></div>
+			<div class="mygrid-20"></div>
+		</div> -->
+
+		<div class="mygrid-row">
+			<div class="mygrid-10"></div>
+			<div class="mygrid-100 hidden" id="tabs">
+				<ul class="nav nav-tabs mygrid-row">
+					<li class="nav-item mygrid-24" style="text-align: center;">
+						<a href="#chartline" class="nav-link" evt="line-chart">
+							<img style="width: 30%;" id="preview-line-img">
+						</a>
+					</li>
+					<li class="nav-item mygrid-24" style="text-align: center;">
+						<a href="#chartarea" class="nav-link" evt="area-chart">
+							<img style="width: 30%;" id="preview-area-img">
+						</a>
+					</li>
+					<li class="nav-item mygrid-24" style="text-align: center;">
+						<a href="#chartbar" class="nav-link active" evt="bar-chart">
+							<img style="width: 30%;" id="preview-bar-img">
+						</a>
+					</li>
+					<li class="nav-item mygrid-24" style="text-align: center;">
+						<a href="#chartpie" class="nav-link" evt="pie-chart">
+							<img style="width: 30%;" id="preview-pie-img">
+						</a>
+					</li>
+					<li class="nav-item mygrid-24" style="text-align: center;">
+						<a href="#charttreemap" class="nav-link" evt="treemap-chart">
+							<img style="width: 30%;" id="preview-treemap-img">
+						</a>
+					</li>
+				</ul>
+				<div class="tab-content">
+					<div id="chartline" class="container tab-pane"></div>
+					<div id="chartarea" class="container tab-pane"></div>
+					<div id="chartbar" class="container tab-pane active"></div>
+					<div id="chartpie" class="container tab-pane"></div>
+					<div id="charttreemap" class="container tab-pane"></div>
+				</div>
+			</div>
+			<div class="mygrid-10"></div>
+		</div>
+			
+		<div class="mygrid-row" id="preview" style="display: inline; opacity:0">
+			<div class="mygrid-24" style="text-align: center" id="preview-line">Line <hr/><hr/><div id="preview-line-svg"></div></div>
+			<div class="mygrid-24" style="text-align: center" id="preview-area">Area <hr/><hr/><div id="preview-area-svg"></div></div>
+			<div class="mygrid-24" style="text-align: center" id="preview-bar">Bar <hr/><hr/><div id="preview-bar-svg"></div></div>
+			<div class="mygrid-24" style="text-align: center" id="preview-pie">Pie <hr/><hr/><div id="preview-pie-svg"></div></div>
+			<div class="mygrid-24" style="text-align: center" id="preview-treemap">treemap <hr/><hr/><div id="preview-treemap-svg"></div></div>
+		</div>
 		<script src="bundle.js" type="module"></script>
+		<script>
+			$(document).ready(function(){
+				$(".nav-tabs a").click(function(){
+					$(this).tab('show');
+					MyEvent.emit($(this).attr('evt'), MyEvent.emit('get-data')[0])
+					// MyEvent.emit(, MyEvent.emit('get-data')[0]);
+				});
+			});
+		</script>
 	</body>
 </html>

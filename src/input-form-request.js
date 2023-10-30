@@ -1,8 +1,24 @@
+import { checkData } from "./bar-chart";
+import ApexCharts from "apexcharts";
+
+let lastTextSent = '';
+const chartData = {
+	_data: [],
+	_time: new Date(),
+	get data() { return this._data; },
+	set data(v) {
+		this._time = new Date();
+		this._data = v;
+	},
+}
+
 export function sendRequest(evt) {
 	const inputTag = document.getElementById('searchbar');
 	const param = { question: inputTag.value };
-	console.log(param);
-	sendFetch(param, false)
+	if (param.question !== lastTextSent) {
+		sendFetch(param, false)
+		lastTextSent = param.question;
+	}
 }
 
 
@@ -28,6 +44,10 @@ function get_SR_Html() {
 
 async function sendFetch(data, isLocal) {
 	const url = (!isLocal) ? 'http://10.160.6.11:7890/ask' : `${document.location.protocol}//${document.location.host}/ask`
+	let inputBox = document.getElementById('searchbar');
+	if (inputBox.classList.contains('error')) {
+		inputBox.classList.remove('error');
+	}
 
 	return new Promise(async (resolve) => {
 		let options = {
@@ -39,28 +59,60 @@ async function sendFetch(data, isLocal) {
 		};
 		const res = await fetch(url, options).catch(console.error);
 		const resJSON = await res.json().catch(console.error);
-		MyEvent.emit('table-from-fetch', resJSON);
+		console.log('RES_JSON', resJSON)
+
+		if (resJSON?.error) {
+			if (!inputBox.classList.contains('error')) {
+				inputBox.classList.add('error');
+			}
+			console.error('SERVER ERROR', error)
+			swal({ icon: 'error', text: error, title: 'Server error'})
+			return null;
+		}
+
+		MyEvent.emit('get-chart-preview', resJSON.data);
+		let labels = Object.entries(resJSON.data[0]).map((i) => { return i[0] });
+		let values = resJSON.data.map((i) => { return Object.entries(i).map((e) => { return e[1] }) })
+		MyEvent.emit('save-data', resJSON.data);
+		if (checkData({ labels, values })) {
+			clearOnceEvents();
+			if (document.getElementById('tabs').classList.contains('hidden')) {
+				document.getElementById('tabs').classList.remove('hidden');
+			}
+			MyEvent.emit('get-charts', resJSON.data );
+		}
+		else {
+			clearOnceEvents();
+			MyEvent.emit('table-from-fetch', resJSON);
+		}
 		resolve(resJSON);
 	})
 }
 
+function clearOnceEvents(...params) {
+	const events = MyEvent.events;
+	const onceEvents = events.filter((e) => { return e.startsWith('ONCE_')});
+	for (let x = 0; x < onceEvents.length; x ++) {
+		MyEvent.emit(onceEvents[x], ...params);
+		let keys = MyEvent.getIDSFromEvent(onceEvents[x]);
+		keys.forEach((k) => { MyEvent.unbind(k, onceEvents[x]); })
+	}
+}
+
 function showTable(result) {
 	let { data, error } = result;
+	console.log({ data, result, searched: document.getElementById('searchbar').value });
+	document.getElementById('query').innerText = `[${result.perf}] - ${result.query}`
 	if (error) {
 		console.error('SERVER ERROR', error)
 		swal({ icon: 'error', text: error, title: 'Server error'})
 		return null;
 	}
-	console.log({
-		data,
-		result,
-		searched: document.getElementById('searchbar').value
-	})
 	// data = data.filter((itme))
 	let labels = Object.entries(data[0]).map((i) => { return i[0] });
 	let values = data.map((i) => { return Object.entries(i).map((e) => { return e[1] }) })
 	console.log({ labels, values })
-	const container = document.getElementById('table');
+	const container = document.getElementById('output');
 	container.innerHTML = '';
 
 	const options = {
@@ -74,6 +126,9 @@ function showTable(result) {
 
 	let table = new gridjs.Grid(options);
 	table.render(container);
+
+	MyEvent.bind('table', 'ONCE_clear-table', () => { table.destroy(); });
+	MyEvent.emit('draw-bar-chart', { labels, values });
 }
 
 //-----------------------------------------------------\\
@@ -107,6 +162,6 @@ btns.send.addEventListener('click', function(event) {
 
 
 MyEvent.bind('table', 'table-from-fetch', showTable);
-// setTimeout(() => {
-// 	document.getElementById('searchbar').value = 'how many different regions are there';
-// }, 1000);
+
+MyEvent.bind('tabs', 'save-data', (d) => { chartData.data = d; });
+MyEvent.bind('tabs', 'get-data', () => { return chartData.data });

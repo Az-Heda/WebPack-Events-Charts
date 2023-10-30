@@ -47,3 +47,31 @@
 	text-align: center;
 	flex-direction: column;
 }
+
+
+.hidden {
+	display: none;
+}
+
+input.error:focus {
+	background-color: #FF000022 !important;
+}
+
+.error {
+	background-color: #FF000022;
+	font-weight: bold;
+}
+
+div:has(div > div >.error) {
+	animation-name: horizontal-shaking;
+	animation-duration: 400ms;
+	animation-iteration-count: 3;
+}
+
+@keyframes horizontal-shaking {
+	0% { transform: translateX(0) }
+	25% { transform: translateX(3px) }
+	50% { transform: translateX(-3px) }
+	75% { transform: translateX(3px) }
+	100% { transform: translateX(0) }
+	}
