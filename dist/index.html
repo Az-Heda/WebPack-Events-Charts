@@ -44,7 +44,7 @@
 		</div>
 		<div class="mygrid-row">
 			<div class="mygrid-20"></div>
-			<div class="mygrid-80" id="query"></div>
+			<div class="mygrid-80" id="query" style="text-align: center; padding-bottom: 20px"></div>
 			<div class="mygrid-20"></div>
 		</div>
 		<div class="mygrid-row">
@@ -57,54 +57,80 @@
 			<div class="mygrid-10"></div>
 			<div class="mygrid-100 hidden" id="tabs">
 				<ul class="nav nav-tabs mygrid-row">
-					<li class="nav-item mygrid-20">
-						<a href="#tablechart" class="nav-link" evt="table">
-							Tabella
+					<li class="nav-item mygrid-30">
+						<a href="#charttable" class="nav-link" evt="table-chart" style="text-align: center;">
+							<img style="width: 20%" srcset="http://127.0.0.1:7788/img/table.svg">
 						</a>
 					</li>
-					<li class="nav-item mygrid-20" style="text-align: center;">
+					<li class="nav-item mygrid-30" style="text-align: center;">
 						<a href="#chartline" class="nav-link" evt="line-chart">
 							<img style="width: 30%;" id="preview-line-img">
 						</a>
 					</li>
-					<li class="nav-item mygrid-20" style="text-align: center;">
+					<li class="nav-item mygrid-30" style="text-align: center;">
 						<a href="#chartarea" class="nav-link" evt="area-chart">
 							<img style="width: 30%;" id="preview-area-img">
 						</a>
 					</li>
-					<li class="nav-item mygrid-20" style="text-align: center;">
+					<li class="nav-item mygrid-30" style="text-align: center;">
 						<a href="#chartbar" class="nav-link active" evt="bar-chart">
 							<img style="width: 30%;" id="preview-bar-img">
 						</a>
 					</li>
-					<li class="nav-item mygrid-20" style="text-align: center;">
+					<li class="nav-item mygrid-30" style="text-align: center;">
 						<a href="#chartpie" class="nav-link" evt="pie-chart">
 							<img style="width: 30%;" id="preview-pie-img">
 						</a>
 					</li>
-					<li class="nav-item mygrid-20" style="text-align: center;">
+					<li class="nav-item mygrid-30" style="text-align: center;">
+						<a href="#chartpolararea" class="nav-link" evt="polararea-chart">
+							<img style="width: 30%;" id="preview-polararea-img">
+						</a>
+					</li>
+					<li class="nav-item mygrid-30" style="text-align: center;">
 						<a href="#charttreemap" class="nav-link" evt="treemap-chart">
 							<img style="width: 30%;" id="preview-treemap-img">
 						</a>
 					</li>
+					<li class="nav-item mygrid-30" style="text-align: center;">
+						<a href="#chartradar" class="nav-link" evt="radar-chart">
+							<img style="width: 30%;" id="preview-radar-img">
+						</a>
+					</li>
 				</ul>
 				<div class="tab-content">
+					<div id="charttable" class="container tab-pane"></div>
 					<div id="chartline" class="container tab-pane"></div>
 					<div id="chartarea" class="container tab-pane"></div>
 					<div id="chartbar" class="container tab-pane active"></div>
-					<div id="chartpie" class="container tab-pane"></div>
+					<div id="chartpie" class="container tab-pane">
+						Impostazioni altri:
+						<input type="range" min="0" max="15" step="0.5" value="4" id="altri-input-pie"/>
+						<span id="altri-value-pie">4%</span>
+						<div id="chartpie-chart"></div>
+					</div>
+					<div id="chartpolararea" class="container tab-pane">
+						Impostazioni altri:
+						<input type="range" min="0" max="15" step="0.5" value="4" id="altri-input-polararea"/>
+						<span id="altri-value-polararea">4%</span>
+						<div id="chartpolararea-chart"></div>
+					</div>
 					<div id="charttreemap" class="container tab-pane"></div>
+					<div id="chartradar" class="container tab-pane"></div>
 				</div>
 			</div>
 			<div class="mygrid-10"></div>
 		</div>
 			
 		<div class="mygrid-row" id="preview" style="display: inline; opacity:0">
+			<div class="mygrid-24" style="text-align: center" id="preview-table">table <hr/><hr/><div id="preview-table-svg"></div></div>
 			<div class="mygrid-24" style="text-align: center" id="preview-line">Line <hr/><hr/><div id="preview-line-svg"></div></div>
 			<div class="mygrid-24" style="text-align: center" id="preview-area">Area <hr/><hr/><div id="preview-area-svg"></div></div>
 			<div class="mygrid-24" style="text-align: center" id="preview-bar">Bar <hr/><hr/><div id="preview-bar-svg"></div></div>
 			<div class="mygrid-24" style="text-align: center" id="preview-pie">Pie <hr/><hr/><div id="preview-pie-svg"></div></div>
+			<div class="mygrid-24" style="text-align: center" id="preview-polararea">polararea <hr/><hr/><div id="preview-polararea-svg"></div></div>
 			<div class="mygrid-24" style="text-align: center" id="preview-treemap">treemap <hr/><hr/><div id="preview-treemap-svg"></div></div>
+			<div class="mygrid-24" style="text-align: center" id="preview-radar">radar <hr/><hr/><div id="preview-radar-svg"></div></div>
 		</div>
 		<script src="bundle.js" type="module"></script>
 		<script>

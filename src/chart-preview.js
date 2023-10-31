@@ -1,6 +1,6 @@
 import ApexCharts from "apexcharts";
+import { filterPIE, getColor, DEFAULT_COLORS, mapNumber } from "./_";
 
-const colors = [ '#008FFB', '#00E396', '#FEB019', '#FF4560', '#775DD0', '#662E9B', '#F86624', '#F9C80E', '#EA3546', '#43BCCD']
 const disabledOptions = {
 	legend: { show: false },
 	xaxis: {
@@ -15,11 +15,10 @@ const disabledOptions = {
 };
 
 export function chartPreview(data) {
-	lineChart(data);
-	areaChart(data);
-	barChart(data);
-	pieChart(data);
-	treemapChart(data);
+	const f = [ lineChart, areaChart, barChart, pieChart, treemapChart, radarChart, polarareaChart, ]
+	f.forEach((func) => {
+		func(data);
+	})
 }
 
 function lineChart(data) {
@@ -39,14 +38,14 @@ function lineChart(data) {
 						chart.destroy();
 					})
 				},
-			}
+			},
 		},
 		dataLabels: { enabled: false },
 		series: [
 			{ name: 'test', data: renamed.map((item) => { return item.y })},
 		],
 		stroke: { width: [5], },
-		
+		colors: getColor(),
 		...disabledOptions,
 	};
 	const chart = new ApexCharts(container, options);
@@ -78,7 +77,7 @@ function areaChart(data) {
 			{ name: 'test', data: renamed.map((item) => { return item.y }) },
 		],
 		stroke: { width: [5], },
-
+		colors: getColor(),
 		...disabledOptions,
 	};
 	const chart = new ApexCharts(container, options);
@@ -111,7 +110,7 @@ function barChart(data) {
 		series: [{
 			data: renamed
 		}],
-
+		colors: getColor(),
 		...disabledOptions
 	};
 	const chart = new ApexCharts(container, options);
@@ -139,11 +138,10 @@ function pieChart(data) {
 				},
 			}
 		},
-		colors,
 		dataLabels: { enabled: false },
 		labels: filterPIE(renamed, '4%').map((item) => { return item.x }),
 		series: filterPIE(renamed, '4%').map((item) => { return item.y }),
-
+		colors: DEFAULT_COLORS,
 		legend: { show: false },
 		...disabledOptions,
 	};
@@ -151,6 +149,42 @@ function pieChart(data) {
 	chart.render();
 	return chart;
 }
+
+function polarareaChart(data) {
+	const renamed = structuredClone(data)
+		.map((item) => { return { x: item[Object.keys(item)[0]], y: item[Object.keys(item)[1]] } })
+		.sort((a, b) => { return (a.y > b.y) ? -1 : (a.y < b.y) ? 1 : 0});
+	const container = document.getElementById('preview-polararea-svg');
+	const img = document.getElementById('preview-polararea-img');
+	const options = {
+		chart: {
+			type: 'polarArea',
+			height: 200,
+			animations: { enabled: false },
+			events: {
+				mounted: () => {
+					chart.dataURI().then((url) => {
+						img.src = url.imgURI;
+						chart.destroy();
+					})
+				},
+			}
+		},
+		dataLabels: { enabled: false },
+		labels: filterPIE(renamed, '4%').map((item) => { return item.x }),
+		series: filterPIE(renamed, '4%').map((item) => { return item.y }),
+		colors: DEFAULT_COLORS,
+		legend: { show: false },
+		...disabledOptions,
+		yaxis: {
+			show: false
+		},
+	};
+	const chart = new ApexCharts(container, options);
+	chart.render();
+	return chart;
+}
+
 
 function treemapChart(data) {
 	const renamed = structuredClone(data)
@@ -177,7 +211,7 @@ function treemapChart(data) {
 		series: [{
 			data: renamed
 		}],
-		colors,
+		colors: DEFAULT_COLORS,
 		...disabledOptions,
 	};
 	const chart = new ApexCharts(container, options);
@@ -185,47 +219,41 @@ function treemapChart(data) {
 	return chart;
 }
 
-//-----------------------------------------------------\\
+function radarChart(data) {
+	const renamed = structuredClone(data)
+		.map((item) => { return { x: item[Object.keys(item)[0]], y: item[Object.keys(item)[1]] } })
+	const allNumbers = renamed.map((item) => { return item.y });
+	const container = document.getElementById('preview-radar-svg');
+	const img = document.getElementById('preview-radar-img');
 
-function filterPIE(data, val=5) {
-	const sum = (...vals) => {
-		let t = 0;
-		vals.forEach((v) => { t += v});
-		return t;
-	}
-	console.log('FILTER_PIE', data);
-	const isPerc = (typeof val == 'string');
-	let validValues = [];
-	if (isPerc) {
-		if (/[0-9.]{1,100}%/.exec(val) === null) {
-			throw new Error(`Percentage "${val}" written in wrong format; Examples: ` + ['1%', '10%', '15.5%'].join(', '));
-		}
-		let perc = /[0-9.]{1,100}/.exec(val)[0] * 1;
-		data.sort((a, b) => (a < b) ? 1 : (a > b) ? -1 : 0 );
-		const tot = sum(...data.map((i) => { return i.y}));
-		const getPerc = function(val, tot) { return val * 100 / tot; };
-	
-		validValues = data.map((item) => {
-			item.perc = getPerc(item.y, tot);
-			return item;
-		})
-		.filter((i) => { return i.perc >= perc});
-	
-		validValues.push({ x: 'Altri', y: sum(...data.filter((item) => { return item.perc < perc}).map((e) => { return e.y})) });
-	
-		validValues = validValues.map((item) => {
-			if (item?.perc) delete item.perc;
-			return item;
-		});
-	}
-	else {
-		let n = val;
-		validValues = data.filter((_, i) => { return i < n});
-		validValues.push({ x: 'Altri', y: sum(...data.filter((_, i) => { return i >= n}).map((e) => { return e.y}))})
-	}
-	return validValues;
+	const options = {
+		chart: {
+			type: 'radar',
+			height: 200,
+			animations: { enabled: false },
+			events: {
+				mounted: () => {
+					chart.dataURI().then((url) => {
+						img.src = url.imgURI;
+						chart.destroy();
+					})
+				},
+			},
+		},
+		dataLabels: { enabled: false },
+		labels: renamed.map((item) => { return item.x }),
+		series: [
+			{ name: '', data: allNumbers.map((item) => { return mapNumber(item, Math.min(...allNumbers), Math.max(...allNumbers), 0, 100) }) }
+		],
+		plotOptions: { radar: { polygons: { strokeColor: '#e8e8e8', fill: { colors: ['#f8f8f8', '#fff'] }}}},
+		colors: getColor(),
+		...disabledOptions,
+	};
+	const chart = new ApexCharts(container, options);
+	chart.render();
 }
 
 //-----------------------------------------------------\\
+
 
 MyEvent.bind('preview', 'get-chart-preview', chartPreview);

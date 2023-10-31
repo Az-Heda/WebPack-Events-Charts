@@ -1,8 +1,9 @@
 import ApexCharts from "apexcharts";
+import { clearOnceEvents, getColor, filterPIE, DEFAULT_COLORS, mapNumber } from "./_";
 
 const height = 500;
 const toolbar = { show: false };
-const colors = [ '#008FFB', '#00E396', '#FEB019', '#FF4560', '#775DD0', '#662E9B', '#F86624', '#F9C80E', '#EA3546', '#43BCCD']
+let activeChart = '';
 
 export function generateCharts(data) {
 	// lineChart(data);
@@ -10,7 +11,8 @@ export function generateCharts(data) {
 	// barChart(data);
 	// pieChart(data);
 	// treemapChart(data);
-	MyEvent.emit('bar-chart', MyEvent.emit('get-data')[0]);
+	// MyEvent.emit('bar-chart', MyEvent.emit('get-data')[0]);
+	MyEvent.emit(MyEvent.emit('get-current-active-chart')[0] || 'bar-chart', MyEvent.emit('get-data')[0]);
 }
 
 function lineChart(data) {
@@ -26,10 +28,11 @@ function lineChart(data) {
 		],
 		labels: renamed.map((item) => { return item.x }),
 		stroke: { width: [5], curve: 'smooth' },
+		colors: getColor(),
 	};
 	const chart = new ApexCharts(container, options);
 	chart.render();
-	MyEvent.bind('chartline', 'ONCE_clear-line-chart', () => { chart.destroy() });
+	MyEvent.bind(container.getAttribute('id'), 'ONCE_clear-line-chart', () => { chart.destroy() });
 	return chart;
 }
 
@@ -46,10 +49,11 @@ function areaChart(data) {
 		],
 		labels: renamed.map((item) => { return item.x }),
 		stroke: { width: [5], curve: 'smooth' },
+		colors: getColor()
 	};
 	const chart = new ApexCharts(container, options);
 	chart.render();
-	MyEvent.bind('chartarea', 'ONCE_clear-area-chart', () => { chart.destroy() });
+	MyEvent.bind(container.getAttribute('id'), 'ONCE_clear-area-chart', () => { chart.destroy() });
 	return chart;
 }
 
@@ -69,11 +73,11 @@ function barChart(data) {
 		responsive: [
 			{ breakpoint: 960, options: { plotOptions: { bar: { horizontal: true }}}}
 		],
-		colors: colors[colors.length -1],
+		colors: getColor(),
 	};
 	const chart = new ApexCharts(container, options);
 	chart.render();
-	MyEvent.bind('chartbar', 'ONCE_clear-bar-chart', () => { chart.destroy() });
+	MyEvent.bind(container.getAttribute('id'), 'ONCE_clear-bar-chart', () => { chart.destroy() });
 	return chart;
 }
 
@@ -82,17 +86,76 @@ function pieChart(data) {
 	const renamed = structuredClone(data)
 		.map((item) => { return { x: item[Object.keys(item)[0]], y: item[Object.keys(item)[1]] } })
 		.sort((a, b) => { return (a.y > b.y) ? -1 : (a.y < b.y) ? 1 : 0});
-	const container = document.getElementById('chartpie');
+	const container = document.getElementById('chartpie-chart');
 	const options = {
 		chart: { type: 'pie', height, toolbar },
 		dataLabels: { enabled: false },
 		labels: filterPIE(renamed, '4%').map((item) => { return item.x }),
 		series: filterPIE(renamed, '4%').map((item) => { return item.y }),
-		colors
+		colors: DEFAULT_COLORS,
 	};
-	const chart = new ApexCharts(container, options);
+	let chart = new ApexCharts(container, options);
 	chart.render();
-	MyEvent.bind('chartpie', 'ONCE_clear-pie-chart', () => { chart.destroy() });
+	MyEvent.bind(container.getAttribute('id'), 'ONCE_clear-pie-chart', () => { chart.destroy() });
+	if (!MyEvent.events.includes('update-pie-chart')) {
+		MyEvent.bind(container.getAttribute('id'), 'update-pie-chart', (p) => {
+			document.getElementById('altri-value-pie').textContent = ((p*1).toFixed(1))+'%';
+			chart.destroy();
+			const optionCopy = {
+				...options,
+				chart: {
+					...options.chart,
+					animations: { enabled: false },
+				},
+				dataLabels: options.dataLabels,
+				labels: filterPIE(renamed, `${p}%`).map((item) => { return item.x }),
+				series: filterPIE(renamed, `${p}%`).map((item) => { return item.y }),
+			}
+			chart = new ApexCharts(container, optionCopy);
+			chart.render();
+		});
+	}
+	return chart;
+}
+
+function polarareaChart(data) {
+	clearOnceEvents();
+	const renamed = structuredClone(data)
+		.map((item) => { return { x: item[Object.keys(item)[0]], y: item[Object.keys(item)[1]] } })
+		.sort((a, b) => { return (a.y > b.y) ? -1 : (a.y < b.y) ? 1 : 0});
+	const container = document.getElementById('chartpolararea-chart');
+	const options = {
+		chart: { type: 'polarArea', height, toolbar },
+		dataLabels: { enabled: false },
+		// labels: filterPIE(renamed, '4%').map((item) => { return item.x }),
+		// series: filterPIE(renamed, '4%').map((item) => { return item.y }),
+		dataLabels: { enabled: false },
+		labels: filterPIE(renamed, '4%').map((item) => { return item.x }),
+		series: filterPIE(renamed, '4%').map((item) => { return item.y }),
+		colors: DEFAULT_COLORS,
+	};
+	let chart = new ApexCharts(container, options);
+	chart.render();
+	MyEvent.bind(container.getAttribute('id'), 'ONCE_clear-polararea-chart', () => { chart.destroy() });
+	MyEvent.bind(container.getAttribute('id'), 'ONCE_clear-polararea-chart', () => { chart.destroy() });
+	if (!MyEvent.events.includes('update-polararea-chart')) {
+		MyEvent.bind(container.getAttribute('id'), 'update-polararea-chart', (p) => {
+			document.getElementById('altri-value-polararea').textContent = ((p*1).toFixed(1))+'%';
+			chart.destroy();
+			const optionCopy = {
+				...options,
+				chart: {
+					...options.chart,
+					animations: { enabled: false },
+				},
+				dataLabels: options.dataLabels,
+				labels: filterPIE(renamed, `${p}%`).map((item) => { return item.x }),
+				series: filterPIE(renamed, `${p}%`).map((item) => { return item.y }),
+			}
+			chart = new ApexCharts(container, optionCopy);
+			chart.render();
+		});
+	}
 	return chart;
 }
 
@@ -109,7 +172,7 @@ function treemapChart(data) {
 		series: [{
 			data: renamed
 		}],
-		colors,
+		colors: DEFAULT_COLORS,
 	};
 	const chart = new ApexCharts(container, options);
 	chart.render();
@@ -117,69 +180,97 @@ function treemapChart(data) {
 	return chart;
 }
 
-//-----------------------------------------------------\\
+function radarChart(data) {
+	clearOnceEvents();
+	const renamed = structuredClone(data)
+		.map((item) => { return { x: item[Object.keys(item)[0]], y: item[Object.keys(item)[1]] } })
+		// .sort((a, b) => { return (a.y > b.y) ? -1 : (a.y < b.y) ? 1 : 0});
+	const allNumbers = renamed.map((item) => { return item.y });
+	const container = document.getElementById('chartradar');
+	const options = {
+		chart: { type: 'radar', height, toolbar },
+		dataLabels: { enabled: false },
+		labels: renamed.map((item) => { return item.x }),
+		series: [
+			{ name: 'Query', data: allNumbers.map((item) => { return mapNumber(item, Math.min(...allNumbers), Math.max(...allNumbers), 0, 100) }) }
+		],
+		colors: getColor(),
+		plotOptions: { radar: { polygons: { strokeColor: '#e8e8e8', fill: { colors: ['#f8f8f8', '#fff'] }}}}
+	};
+	console.log({options}, container)
+	const chart = new ApexCharts(container, options);
+	chart.render();
+	MyEvent.bind(container.getAttribute('id'), 'ONCE_clear-radar-chart', () => { chart.destroy() });
+}
 
-function filterPIE(data, val=5) {
-	const sum = (...vals) => {
-		let t = 0;
-		vals.forEach((v) => { t += v});
-		return t;
-	}
-	console.log('FILTER_PIE', data);
-	const isPerc = (typeof val == 'string');
-	let validValues = [];
-	if (isPerc) {
-		if (/[0-9.]{1,100}%/.exec(val) === null) {
-			throw new Error(`Percentage "${val}" written in wrong format; Examples: ` + ['1%', '10%', '15.5%'].join(', '));
-		}
-		let perc = /[0-9.]{1,100}/.exec(val)[0] * 1;
-		data.sort((a, b) => (a < b) ? 1 : (a > b) ? -1 : 0 );
-		const tot = sum(...data.map((i) => { return i.y}));
-		const getPerc = function(val, tot) { return val * 100 / tot; };
-	
-		validValues = data.map((item) => {
-			item.perc = getPerc(item.y, tot);
-			return item;
-		})
-		.filter((i) => { return i.perc >= perc});
-	
-		validValues.push({ x: 'Altri', y: sum(...data.filter((item) => { return item.perc < perc}).map((e) => { return e.y})) });
-	
-		validValues = validValues.map((item) => {
-			if (item?.perc) delete item.perc;
-			return item;
+function tableChart(data) {
+
+	const labels = Object.entries(data[0]).map((i) => { return i[0] });
+	const values = data.map((i) => {
+		return Object.entries(i).map((e) => {
+			return e[1];
 		});
-	}
-	else {
-		let n = val;
-		validValues = data.filter((_, i) => { return i < n});
-		validValues.push({ x: 'Altri', y: sum(...data.filter((_, i) => { return i >= n}).map((e) => { return e.y}))})
-	}
-	console.log('FILTER_PIE', validValues);
-	return validValues;
-}
+	});
 
-function clearOnceEvents(...params) {
-	const events = MyEvent.events;
-	const onceEvents = events.filter((e) => { return e.startsWith('ONCE_')});
-	for (let x = 0; x < onceEvents.length; x ++) {
-		MyEvent.emit(onceEvents[x], ...params);
-		let keys = MyEvent.getIDSFromEvent(onceEvents[x]);
-		keys.forEach((k) => { MyEvent.unbind(k, onceEvents[x]); })
-	}
+	const container = document.getElementById('charttable');
+	const sortAsc = 'Ordine crescente';
+	const sortDesc = 'Ordine decrescente';
+	const language = {
+		search: { placeholder: 'Cerca...' },
+		pagination: {
+			previous: 'Precedente', next: 'Successivo',
+			showing: 'Mostrati risultati da',
+			results: 'totali', to: 'a', of: 'di',
+		},
+	};
+	const options = {
+		columns: [...labels ],
+		data: [ ...values ],
+		search: true,
+		sort: { sortAsc, sortDesc },
+		resizable: true,
+		pagination: true,
+		fixedHeader: true,
+		autoWidth: false,
+		language,
+		className: {
+			tr: 'gridjs-custom-row',
+		}
+	};
+	let table = new gridjs.Grid(options);
+	table.render(container);
+
+	// MyEvent.bind(container.getAttribute('id'), 'get-table', () => { return table });
+	MyEvent.bind(container.getAttribute('id'), 'ONCE_clear-table-chart', () => { table.destroy() });
 }
 
 //-----------------------------------------------------\\
-
-
 
 MyEvent.bind('tabs', 'get-charts', generateCharts);
 
-MyEvent.bind('chartline', 'line-chart', lineChart);
-MyEvent.bind('chartarea', 'area-chart', areaChart);
-MyEvent.bind('chartbar', 'bar-chart', barChart);
-MyEvent.bind('chartpie', 'pie-chart', pieChart);
-MyEvent.bind('charttreemap', 'treemap-chart', treemapChart);
+const eventData = [
+	{ id: 'charttable',       name: 'table-chart',       fun: tableChart       },
+	{ id: 'chartline',        name: 'line-chart',        fun: lineChart        },
+	{ id: 'chartarea',        name: 'area-chart',        fun: areaChart        },
+	{ id: 'chartbar',         name: 'bar-chart',         fun: barChart         },
+	{ id: 'chartpie',         name: 'pie-chart',         fun: pieChart         },
+	{ id: 'charttreemap',     name: 'treemap-chart',     fun: treemapChart     },
+	{ id: 'chartradar',       name: 'radar-chart',       fun: radarChart       },
+	{ id: 'chartpolararea',   name: 'polararea-chart',   fun: polarareaChart   },
+];
+
+eventData.forEach((p) => {
+	MyEvent.bind(p.id, p.name, (...data) => {
+		MyEvent.emit('set-current-active-chart', p.name);
+		return p.fun(...data);
+	})
+});
+
+MyEvent.bind('ai-search', 'set-current-active-chart', (v) => { activeChart = v });
+MyEvent.bind('ai-search', 'get-current-active-chart', () => { return activeChart });
+
+document.getElementById('altri-input-pie').addEventListener("input", (event) => { MyEvent.emit('update-pie-chart', event.target.value); });
+document.getElementById('altri-input-polararea').addEventListener("input", (event) => { MyEvent.emit('update-polararea-chart', event.target.value); });
 
 // y = chart.getChartArea();
 // s = new XMLSerializer().serializeToString(y);

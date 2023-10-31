@@ -74,4 +74,9 @@ div:has(div > div >.error) {
 	50% { transform: translateX(-3px) }
 	75% { transform: translateX(3px) }
 	100% { transform: translateX(0) }
-	}
+}
+
+
+tr.gridjs-custom-row:hover td{
+	background-color: #e6e6e6 !important;
+}

@@ -1,5 +1,6 @@
 import { checkData } from "./bar-chart";
 import ApexCharts from "apexcharts";
+import { clearOnceEvents } from "./_";
 
 let lastTextSent = '';
 const chartData = {
@@ -15,8 +16,12 @@ const chartData = {
 export function sendRequest(evt) {
 	const inputTag = document.getElementById('searchbar');
 	const param = { question: inputTag.value };
+	clearOnceEvents();
 	if (param.question !== lastTextSent) {
-		sendFetch(param, false)
+		if (!document.getElementById('tabs').classList.contains('hidden')) {
+			document.getElementById('tabs').classList.add('hidden');
+		}
+		sendFetch(param, true)
 		lastTextSent = param.question;
 	}
 }
@@ -43,7 +48,7 @@ function get_SR_Html() {
 }
 
 async function sendFetch(data, isLocal) {
-	const url = (!isLocal) ? 'http://10.160.6.11:7890/ask' : `${document.location.protocol}//${document.location.host}/ask`
+	const url = (!isLocal) ? 'http://10.160.6.11:7890/api/ask' : `${document.location.protocol}//${document.location.host}/api/ask`
 	let inputBox = document.getElementById('searchbar');
 	if (inputBox.classList.contains('error')) {
 		inputBox.classList.remove('error');
@@ -60,43 +65,28 @@ async function sendFetch(data, isLocal) {
 		const res = await fetch(url, options).catch(console.error);
 		const resJSON = await res.json().catch(console.error);
 		console.log('RES_JSON', resJSON)
-
+		document.getElementById('query').innerText = `[${resJSON.perf}]\n${resJSON?.query || resJSON?.error}`
 		if (resJSON?.error) {
 			if (!inputBox.classList.contains('error')) {
 				inputBox.classList.add('error');
 			}
-			console.error('SERVER ERROR', error)
+			console.error('SERVER ERROR', resJSON.error)
 			swal({ icon: 'error', text: error, title: 'Server error'})
 			return null;
 		}
 
 		MyEvent.emit('get-chart-preview', resJSON.data);
-		let labels = Object.entries(resJSON.data[0]).map((i) => { return i[0] });
-		let values = resJSON.data.map((i) => { return Object.entries(i).map((e) => { return e[1] }) })
+		// let labels = Object.entries(resJSON.data[0]).map((i) => { return i[0] });
+		// let values = resJSON.data.map((i) => { return Object.entries(i).map((e) => { return e[1] }) })
 		MyEvent.emit('save-data', resJSON.data);
-		if (checkData({ labels, values })) {
-			clearOnceEvents();
-			if (document.getElementById('tabs').classList.contains('hidden')) {
-				document.getElementById('tabs').classList.remove('hidden');
-			}
-			MyEvent.emit('get-charts', resJSON.data );
+		clearOnceEvents();
+		if (document.getElementById('tabs').classList.contains('hidden')) {
+			document.getElementById('tabs').classList.remove('hidden');
 		}
-		else {
-			clearOnceEvents();
-			MyEvent.emit('table-from-fetch', resJSON);
-		}
+		// MyEvent.emit((MyEvent.emit('get-current-active-chart') || ['bar-chart'])[0], MyEvent.emit('get-data')[0]);
+		MyEvent.emit('get-charts', resJSON.data);
 		resolve(resJSON);
 	})
-}
-
-function clearOnceEvents(...params) {
-	const events = MyEvent.events;
-	const onceEvents = events.filter((e) => { return e.startsWith('ONCE_')});
-	for (let x = 0; x < onceEvents.length; x ++) {
-		MyEvent.emit(onceEvents[x], ...params);
-		let keys = MyEvent.getIDSFromEvent(onceEvents[x]);
-		keys.forEach((k) => { MyEvent.unbind(k, onceEvents[x]); })
-	}
 }
 
 function showTable(result) {

@@ -3,12 +3,12 @@ import ApexCharts from "apexcharts";
 
 export function checkData(data) {
 	const { labels, values } = data;
-	console.log('CHECKDATA', { labels, values })
+	// console.log('CHECKDATA', { labels, values })
 	if (labels.length == 2) {
 		let corr = false;
 		let funcs = ['avg', 'count', 'sum', 'min', 'max'];
 		labels.forEach((l) => {
-			console.log(`${l.toLowerCase().split('(')[0]} - [${funcs.join(', ')}]`)
+			// console.log(`${l.toLowerCase().split('(')[0]} - [${funcs.join(', ')}]`)
 			if (funcs.includes(l.toLowerCase().split('(')[0])) {
 				corr = true;
 			}
