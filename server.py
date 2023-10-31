@@ -1,35 +1,63 @@
-from sanic import Sanic, Request, response
-from sanic.log import logger
+from sanic import Sanic, json, Blueprint, Request, response
 from sanic_cors import CORS
 from typing import Final
 import pandas as pd
-import warnings
-import pyodbc
-import json
-import datetime
+from time import time
+import sqlite3
+from ttsql import Model_V1 as Model
 
+staticDir : Final = './dist'
 
-warnings.simplefilter("ignore", category=UserWarning)
+model = Model()
+conn = sqlite3.connect("model/.sqlite3")
 
-conn : pyodbc.Connection = pyodbc.connect(
-	"Driver={ODBC Driver 17 for SQL Server};"
-	"Server=srvdb04.seac.local;"
-	"Trusted_Connection=yes;"
-)
+site = Blueprint('website', url_prefix='/website')
+api = Blueprint('api', url_prefix='/api')
 
-app : Sanic = Sanic(__name__)
+app = Sanic(__name__)
 CORS(app)
 
 
-staticDir : Final = './dist'
-app.static('/website', staticDir, name='dist')
+site.static('/', staticDir, name='dist')
 
 @app.route('/', methods=['GET'])
 def homepage(req : Request):
 	return response.redirect('/website/index.html')
 
-@app.route('/ask', methods=['POST'])
-def ask(req : Request):
-	df = pd.read_sql(open('query.sql', 'r').read(), conn)
-	df = df.map(lambda x: x if type(x) in [datetime.date, datetime.datetime] else x.strftime('%a %d %b %Y, %I:%M'))
-	return response.json(df.to_dict(orient='records'))
+
+@api.route("ask", methods=["POST"])
+async def ask(request):
+    response = None
+    start = time()
+
+    try:
+        assert "question" in request.json
+
+        sql_query = model.gen_sql(request.json.get("question"))
+
+        data = pd.read_sql(sql_query, conn).map(
+            lambda x: x if not pd.isna(x) else "Valore mancante"
+        )
+
+        response = {
+            "data": data.to_dict(
+                orient="records",
+            ),
+            "metadata": [type(j).__name__ for j in data.iloc[0]],
+            "query": sql_query,
+        }
+
+    except Exception as e:
+        response = {"error": str(e)}
+
+    end = time()
+
+    return json({"perf": f"{(end-start)*1000:.3f} ms", **response})
+
+
+@api.route("table", methods=["GET"])
+async def table(request):
+    return json({"tables": model.tables})
+
+
+app.blueprint([site, api])

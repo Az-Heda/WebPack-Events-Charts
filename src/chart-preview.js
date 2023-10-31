@@ -1,6 +1,18 @@
 import ApexCharts from "apexcharts";
 
 const colors = [ '#008FFB', '#00E396', '#FEB019', '#FF4560', '#775DD0', '#662E9B', '#F86624', '#F9C80E', '#EA3546', '#43BCCD']
+const disabledOptions = {
+	legend: { show: false },
+	xaxis: {
+		labels: { show: false },
+		axisBorder: { show: false }
+	},
+	yaxis: {
+		labels: { show: false },
+		axisBorder: { show: false }
+	},
+	grid: { show: false }
+};
 
 export function chartPreview(data) {
 	lineChart(data);
@@ -35,16 +47,7 @@ function lineChart(data) {
 		],
 		stroke: { width: [5], },
 		
-		legend: { show: false },
-		xaxis: {
-			labels: { show: false },
-			axisBorder: { show: false }
-		},
-		yaxis: {
-			labels: { show: false },
-			axisBorder: { show: false }
-		},
-		grid: { show: false }
+		...disabledOptions,
 	};
 	const chart = new ApexCharts(container, options);
 	chart.render();
@@ -76,16 +79,7 @@ function areaChart(data) {
 		],
 		stroke: { width: [5], },
 
-		legend: { show: false },
-		xaxis: {
-			labels: { show: false },
-			axisBorder: { show: false }
-		},
-		yaxis: {
-			labels: { show: false },
-			axisBorder: { show: false }
-		},
-		grid: { show: false }
+		...disabledOptions,
 	};
 	const chart = new ApexCharts(container, options);
 	chart.render();
@@ -118,16 +112,7 @@ function barChart(data) {
 			data: renamed
 		}],
 
-		legend: { show: false },
-		xaxis: {
-			labels: { show: false },
-			axisBorder: { show: false }
-		},
-		yaxis: {
-			labels: { show: false },
-			axisBorder: { show: false }
-		},
-		grid: { show: false }
+		...disabledOptions
 	};
 	const chart = new ApexCharts(container, options);
 	chart.render();
@@ -160,15 +145,7 @@ function pieChart(data) {
 		series: filterPIE(renamed, '4%').map((item) => { return item.y }),
 
 		legend: { show: false },
-		xaxis: {
-			labels: { show: false },
-			axisBorder: { show: false }
-		},
-		yaxis: {
-			labels: { show: false },
-			axisBorder: { show: false }
-		},
-		grid: { show: false }
+		...disabledOptions,
 	};
 	const chart = new ApexCharts(container, options);
 	chart.render();
@@ -201,16 +178,7 @@ function treemapChart(data) {
 			data: renamed
 		}],
 		colors,
-		legend: { show: false },
-		xaxis: {
-			labels: { show: false },
-			axisBorder: { show: false }
-		},
-		yaxis: {
-			labels: { show: false },
-			axisBorder: { show: false }
-		},
-		grid: { show: false }
+		...disabledOptions,
 	};
 	const chart = new ApexCharts(container, options);
 	chart.render();
@@ -255,7 +223,6 @@ function filterPIE(data, val=5) {
 		validValues = data.filter((_, i) => { return i < n});
 		validValues.push({ x: 'Altri', y: sum(...data.filter((_, i) => { return i >= n}).map((e) => { return e.y}))})
 	}
-	console.log('FILTER_PIE', validValues);
 	return validValues;
 }
 

@@ -1,5 +1,9 @@
 .vscode
 
 node_modules
+tmp/
+temp/
+
 package-lock.json
 bundle.js
+.sqlite3

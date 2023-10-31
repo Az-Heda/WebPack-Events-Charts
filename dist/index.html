@@ -29,19 +29,16 @@
 					<div class="input-group mygrid-8">
 						<button class="input-group-text w100 textCenter" id="speechRecognition">Ricerca vocale</button>
 					</div>
-					<!-- <div class="input-group mygrid-1"></div> -->
 					<div class="input-group mygrid-70">
 						<div class="placeholder w100" data-placeholder="Chiedi qualcosa a HeySeac" id="autoCompletePlaceholder">
 							<input type="text" class="form-control w100" id="searchbar" autocomplete="off" tab-index="-1" value="count all different call groups"/>
 						</div>
 					</div>
-					<!-- <div class="input-group mygrid-1"></div> -->
 					<div class="input-group mygrid-8">
 						<input type="hidden" class="form-control metadata" id="metadata-chart" />
 						<input type="hidden" class="form-control metadata" id="metadata-table" />
 						<button class="input-group-text w100 textCenter" id="confirm-form">Cerca</button>
 					</div>
-					<!-- <div class="input-group mygrid-16"></div> -->
 				</div>
 			</form>
 		</div>
@@ -55,37 +52,37 @@
 			<div class="mygrid-80" id="output"></div>
 			<div class="mygrid-20"></div>
 		</div>
-		<!-- <div class="mygrid-row">
-			<div class="mygrid-20"></div>
-			<div class="mygrid-80" id="test-chart"></div>
-			<div class="mygrid-20"></div>
-		</div> -->
 
 		<div class="mygrid-row">
 			<div class="mygrid-10"></div>
 			<div class="mygrid-100 hidden" id="tabs">
 				<ul class="nav nav-tabs mygrid-row">
-					<li class="nav-item mygrid-24" style="text-align: center;">
+					<li class="nav-item mygrid-20">
+						<a href="#tablechart" class="nav-link" evt="table">
+							Tabella
+						</a>
+					</li>
+					<li class="nav-item mygrid-20" style="text-align: center;">
 						<a href="#chartline" class="nav-link" evt="line-chart">
 							<img style="width: 30%;" id="preview-line-img">
 						</a>
 					</li>
-					<li class="nav-item mygrid-24" style="text-align: center;">
+					<li class="nav-item mygrid-20" style="text-align: center;">
 						<a href="#chartarea" class="nav-link" evt="area-chart">
 							<img style="width: 30%;" id="preview-area-img">
 						</a>
 					</li>
-					<li class="nav-item mygrid-24" style="text-align: center;">
+					<li class="nav-item mygrid-20" style="text-align: center;">
 						<a href="#chartbar" class="nav-link active" evt="bar-chart">
 							<img style="width: 30%;" id="preview-bar-img">
 						</a>
 					</li>
-					<li class="nav-item mygrid-24" style="text-align: center;">
+					<li class="nav-item mygrid-20" style="text-align: center;">
 						<a href="#chartpie" class="nav-link" evt="pie-chart">
 							<img style="width: 30%;" id="preview-pie-img">
 						</a>
 					</li>
-					<li class="nav-item mygrid-24" style="text-align: center;">
+					<li class="nav-item mygrid-20" style="text-align: center;">
 						<a href="#charttreemap" class="nav-link" evt="treemap-chart">
 							<img style="width: 30%;" id="preview-treemap-img">
 						</a>
@@ -115,7 +112,6 @@
 				$(".nav-tabs a").click(function(){
 					$(this).tab('show');
 					MyEvent.emit($(this).attr('evt'), MyEvent.emit('get-data')[0])
-					// MyEvent.emit(, MyEvent.emit('get-data')[0]);
 				});
 			});
 		</script>
