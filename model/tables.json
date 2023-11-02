@@ -1,0 +1,5 @@
+{
+	"registry": [ "id", "vat_number", "tax_id_code", "name", "surname" ],
+	"callcenter": [ "id", "year", "month", "day", "status", "duration", "call_group", "cause" ],
+	"wages": [ "id", "year", "month", "day", "payslip_current_year", "payslip_current_year" ]
+}

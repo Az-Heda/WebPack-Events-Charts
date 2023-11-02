@@ -1,7 +1,0 @@
-torch
-transformers
-pyodbc
-pandas
-sqlparse
-sanic
-sanic_cors

@@ -1,9 +1,15 @@
 import ApexCharts from "apexcharts";
-import { clearOnceEvents, getColor, filterPIE, DEFAULT_COLORS, mapNumber } from "./_";
+import { clearOnceEvents, getColor, filterPIE, DEFAULT_COLORS, mapNumber, prodMode} from "./_";
 
 const height = 500;
-const toolbar = { show: false };
+const toolbar = {
+	show: true,
+	tools: {
+		download: false,
+	}
+};
 let activeChart = '';
+const logStyle = 'success';
 
 export function generateCharts(data) {
 	// lineChart(data);
@@ -30,6 +36,7 @@ function lineChart(data) {
 		stroke: { width: [5], curve: 'smooth' },
 		colors: getColor(),
 	};
+	if (!prodMode) { logMessage('Line chart', options, logStyle); }
 	const chart = new ApexCharts(container, options);
 	chart.render();
 	MyEvent.bind(container.getAttribute('id'), 'ONCE_clear-line-chart', () => { chart.destroy() });
@@ -42,7 +49,7 @@ function areaChart(data) {
 		.map((item) => { return { x: item[Object.keys(item)[0]], y: item[Object.keys(item)[1]] } })
 	const container = document.getElementById('chartarea');
 	const options = {
-		chart: { type: 'area', height, toolbar},
+		chart: { type: 'area', height, toolbar },
 		dataLabels: { enabled: false },
 		series: [
 			{ name: 'test', data: renamed.map((item) => { return item.y }) },
@@ -51,6 +58,7 @@ function areaChart(data) {
 		stroke: { width: [5], curve: 'smooth' },
 		colors: getColor()
 	};
+	if (!prodMode) { logMessage('Area chart', options, logStyle); }
 	const chart = new ApexCharts(container, options);
 	chart.render();
 	MyEvent.bind(container.getAttribute('id'), 'ONCE_clear-area-chart', () => { chart.destroy() });
@@ -75,6 +83,7 @@ function barChart(data) {
 		],
 		colors: getColor(),
 	};
+	if (!prodMode) { logMessage('Bar chart', options, logStyle); }
 	const chart = new ApexCharts(container, options);
 	chart.render();
 	MyEvent.bind(container.getAttribute('id'), 'ONCE_clear-bar-chart', () => { chart.destroy() });
@@ -94,6 +103,7 @@ function pieChart(data) {
 		series: filterPIE(renamed, '4%').map((item) => { return item.y }),
 		colors: DEFAULT_COLORS,
 	};
+	if (!prodMode) { logMessage('Pie chart', options, logStyle); }
 	let chart = new ApexCharts(container, options);
 	chart.render();
 	MyEvent.bind(container.getAttribute('id'), 'ONCE_clear-pie-chart', () => { chart.destroy() });
@@ -111,6 +121,7 @@ function pieChart(data) {
 				labels: filterPIE(renamed, `${p}%`).map((item) => { return item.x }),
 				series: filterPIE(renamed, `${p}%`).map((item) => { return item.y }),
 			}
+			if (!prodMode) { logMessage('Pie chart - updater', optionCopy, logStyle); }
 			chart = new ApexCharts(container, optionCopy);
 			chart.render();
 		});
@@ -134,6 +145,7 @@ function polarareaChart(data) {
 		series: filterPIE(renamed, '4%').map((item) => { return item.y }),
 		colors: DEFAULT_COLORS,
 	};
+	if (!prodMode) { logMessage('PolarArea chart', options, logStyle); }
 	let chart = new ApexCharts(container, options);
 	chart.render();
 	MyEvent.bind(container.getAttribute('id'), 'ONCE_clear-polararea-chart', () => { chart.destroy() });
@@ -152,6 +164,7 @@ function polarareaChart(data) {
 				labels: filterPIE(renamed, `${p}%`).map((item) => { return item.x }),
 				series: filterPIE(renamed, `${p}%`).map((item) => { return item.y }),
 			}
+			if (!prodMode) { logMessage('PolarArea chart - updater', optionCopy, logStyle); }
 			chart = new ApexCharts(container, optionCopy);
 			chart.render();
 		});
@@ -174,6 +187,7 @@ function treemapChart(data) {
 		}],
 		colors: DEFAULT_COLORS,
 	};
+	if (!prodMode) { logMessage('Treemap chart', options, logStyle); }
 	const chart = new ApexCharts(container, options);
 	chart.render();
 	MyEvent.bind('charttreemap', 'ONCE_clear-treemap-chart', () => { chart.destroy() });
@@ -197,7 +211,7 @@ function radarChart(data) {
 		colors: getColor(),
 		plotOptions: { radar: { polygons: { strokeColor: '#e8e8e8', fill: { colors: ['#f8f8f8', '#fff'] }}}}
 	};
-	console.log({options}, container)
+	if (!prodMode) { logMessage('Radar chart', options, logStyle); }
 	const chart = new ApexCharts(container, options);
 	chart.render();
 	MyEvent.bind(container.getAttribute('id'), 'ONCE_clear-radar-chart', () => { chart.destroy() });
@@ -237,6 +251,7 @@ function tableChart(data) {
 			tr: 'gridjs-custom-row',
 		}
 	};
+	if (!prodMode) { logMessage('Table', options, logStyle); }
 	let table = new gridjs.Grid(options);
 	table.render(container);
 
@@ -271,8 +286,3 @@ MyEvent.bind('ai-search', 'get-current-active-chart', () => { return activeChart
 
 document.getElementById('altri-input-pie').addEventListener("input", (event) => { MyEvent.emit('update-pie-chart', event.target.value); });
 document.getElementById('altri-input-polararea').addEventListener("input", (event) => { MyEvent.emit('update-polararea-chart', event.target.value); });
-
-// y = chart.getChartArea();
-// s = new XMLSerializer().serializeToString(y);
-
-// https://stackoverflow.com/questions/28450471/convert-inline-svg-to-base64-string

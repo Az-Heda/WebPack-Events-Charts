@@ -15,7 +15,7 @@
 		<script src="https://unpkg.com/azheda-utils-v2@latest/Client/SpeechRecognition/speechRecognition.js"></script>
 		<script src="https://unpkg.com/azheda-utils-v2@latest/Client/Swap/swap.js"></script>
 		<script src="https://unpkg.com/azheda-utils-v2@latest/Client/Event/event.js"></script>
-		<!-- <script src="https://unpkg.com/azheda-utils-v2@latest/Client/Utils/utils.js"></script> -->
+		<script src="https://unpkg.com/azheda-utils-v2@latest/Client/Utils/utils.js"></script>
 		<script src="https://unpkg.com/sweetalert@2.1.2/dist/sweetalert.min.js"></script>
 		<script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
 	</head>
@@ -52,6 +52,8 @@
 			<div class="mygrid-80" id="output"></div>
 			<div class="mygrid-20"></div>
 		</div>
+
+		
 
 		<div class="mygrid-row">
 			<div class="mygrid-10"></div>
@@ -104,15 +106,15 @@
 					<div id="chartarea" class="container tab-pane"></div>
 					<div id="chartbar" class="container tab-pane active"></div>
 					<div id="chartpie" class="container tab-pane">
-						Impostazioni altri:
-						<input type="range" min="0" max="15" step="0.5" value="4" id="altri-input-pie"/>
-						<span id="altri-value-pie">4%</span>
+						<!-- Impostazioni altri: -->
+						<input type="hidden" min="0" max="15" step="0.5" value="4" id="altri-input-pie"/>
+						<!-- <span id="altri-value-pie">4%</span> -->
 						<div id="chartpie-chart"></div>
 					</div>
 					<div id="chartpolararea" class="container tab-pane">
-						Impostazioni altri:
-						<input type="range" min="0" max="15" step="0.5" value="4" id="altri-input-polararea"/>
-						<span id="altri-value-polararea">4%</span>
+						<!-- Impostazioni altri: -->
+						<input type="hidden" min="0" max="15" step="0.5" value="4" id="altri-input-polararea"/>
+						<!-- <span id="altri-value-polararea">4%</span> -->
 						<div id="chartpolararea-chart"></div>
 					</div>
 					<div id="charttreemap" class="container tab-pane"></div>

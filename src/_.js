@@ -1,6 +1,7 @@
+export const prodMode = false;
 export const DEFAULT_COLORS = [
-	'#008FFB', '#00E396', '#FEB019', '#FF4560', '#775DD0',
-	'#662E9B', '#F86624', '#F9C80E', '#EA3546', '#43BCCD'
+	...['#008FFB', '#00E396', '#FEB019', '#FF4560', '#775DD0'],
+	...['#662E9B', '#EA3546', '#F86624', '#F9C80E', '#43BCCD'].reverse(),
 ];
 
 export function clearOnceEvents(...params) {
@@ -32,7 +33,6 @@ export function getColor(text=null, single=false) {
 	if (text === null) {
 		text = document.getElementById('searchbar').value;
 	}
-	console.log(`GET-COLOR`, text)
 	if (DEFAULT_COLORS.length > 10) DEFAULT_COLORS.splice(10)
 	const h = hashSeed(text, 1);
 	const m = h % DEFAULT_COLORS.length;

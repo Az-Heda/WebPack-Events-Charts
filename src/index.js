@@ -4,6 +4,7 @@ import { sendRequest } from './input-form-request';
 import { checkData } from './bar-chart';
 import { chartPreview } from './chart-preview';
 import { generateCharts } from './all-charts';
+import { tableRequest } from './get-tables';
 
 // new Chart(document.querySelector('#chart-1'))
 // new Chart(document.querySelector('#chart-2'))

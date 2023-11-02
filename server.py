@@ -4,17 +4,17 @@ from typing import Final
 import pandas as pd
 from time import time
 import sqlite3
-from ttsql import Model_V1 as Model
+from ttsql import Model_V1 as Model, modelDir
 
 staticDir1 : Final = './dist'
 staticDir2 : Final = './images'
 
 model = Model()
-conn = sqlite3.connect("model/.sqlite3")
+conn = sqlite3.connect(f'{modelDir}/database.sqlite3')
 
-site = Blueprint('website', url_prefix='/website')
-api = Blueprint('api', url_prefix='/api')
-images = Blueprint('images', url_prefix='/img')
+site : Blueprint = Blueprint('website', url_prefix='/website')
+api : Blueprint = Blueprint('api', url_prefix='/api')
+images : Blueprint = Blueprint('images', url_prefix='/img')
 
 app = Sanic(__name__)
 CORS(app)
@@ -29,38 +29,27 @@ def homepage(req : Request):
 
 
 @api.route("ask", methods=["POST"])
-async def ask(request):
-	response = None
-	start = time()
-
+async def ask(req : Request):
+	response : dict = None
+	start : float = time()
 	try:
-		assert "question" in request.json
-
-		sql_query = model.gen_sql(request.json.get("question"))
-
-		data = pd.read_sql(sql_query, conn).map(
-			lambda x: x if not pd.isna(x) else "Valore mancante"
-		)
-
+		assert 'question' in req.json
+		sql_query : str = model.gen_sql(req.json.get('question'))
+		data : pd.DataFrame = pd.read_sql(sql_query, conn).map(lambda x: x if not pd.isna(x) else 'Valore mancante')
 		response = {
-			"data": data.to_dict(
-				orient="records",
-			),
-			"metadata": [type(j).__name__ for j in data.iloc[0]],
-			"query": sql_query,
+			'data': data.to_dict(orient='records'),
+			'metadata': [type(j).__name__ for j in data.iloc[0]],
+			'query': sql_query,
 		}
-
 	except Exception as e:
-		response = {"error": str(e)}
-
+		response = {'error': str(e)}
 	end = time()
+	return json({'perf': f'{(end-start)*1000:.3f} ms', **response})
 
-	return json({"perf": f"{(end-start)*1000:.3f} ms", **response})
 
-
-@api.route("table", methods=["GET"])
-async def table(request):
-	return json({"tables": model.tables})
+@api.route('tables', methods=['GET'])
+async def tables(req : Request):
+	return json(model.get_tables())
 
 
 app.blueprint([site, api, images])
