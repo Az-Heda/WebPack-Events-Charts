@@ -1,9 +1,9 @@
 .vscode
 
-node_modules
+node_modules/
+__pycache__/
 tmp/
 temp/
 
 package-lock.json
-bundle.js
 .sqlite3
