@@ -8,6 +8,7 @@
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 		<link rel="stylesheet" href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" />
 		<link rel="stylesheet" type="text/css" href="https://unpkg.com/azheda-utils-v2@latest/Client/_css/grid.css"/>
+		<link rel="stylesheet" type="text/css" href="sidebar.css"/>
 		<link rel="stylesheet" type="text/css" href="main.css"/>
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
@@ -17,11 +18,23 @@
 		<script src="https://unpkg.com/azheda-utils-v2@latest/Client/Event/event.js"></script>
 		<script src="https://unpkg.com/azheda-utils-v2@latest/Client/Utils/utils.js"></script>
 		<script src="https://unpkg.com/sweetalert@2.1.2/dist/sweetalert.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
 		<script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+
+		<script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js"></script>
+    	<script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js"></script>
 	</head>
 	<body>
-
+		<div class="wrapper" id="table-menu"></div>
 		<div class="container-fluid" id="ai-search">
+			<div class="mygrid-row">
+				<div class="mygrid-17" style="position: absolute; z-index: 1">
+					<button type="button" id="sidebarCollapse" class="btn btn-info" style="width: 100%">
+						<i class="fas fa-align-left"></i>
+						<span>Tabelle</span>
+					</button>
+				</div>
+			</div>
 			<form method="POST" class="form-group" id="input-form">
 				<div class="mygrid-row">
 					<button style="display: none;"></button>
@@ -52,8 +65,6 @@
 			<div class="mygrid-80" id="output"></div>
 			<div class="mygrid-20"></div>
 		</div>
-
-		
 
 		<div class="mygrid-row">
 			<div class="mygrid-10"></div>
@@ -134,7 +145,6 @@
 			<div class="mygrid-24" style="text-align: center" id="preview-treemap">treemap <hr/><hr/><div id="preview-treemap-svg"></div></div>
 			<div class="mygrid-24" style="text-align: center" id="preview-radar">radar <hr/><hr/><div id="preview-radar-svg"></div></div>
 		</div>
-		<script src="bundle.js" type="module"></script>
 		<script>
 			$(document).ready(function(){
 				$(".nav-tabs a").click(function(){
@@ -143,5 +153,6 @@
 				});
 			});
 		</script>
+		<script src="bundle.js" type="module"></script>
 	</body>
 </html>

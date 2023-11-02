@@ -86,3 +86,10 @@ export function filterPIE(data, val=5) {
 export function mapNumber(n, start1, stop1, start2, stop2) {
 	return (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
 }
+
+
+export async function sleep(ms) {
+	return new Promise((resolve) => {
+		setTimeout(resolve, ms, ms);
+	})
+}

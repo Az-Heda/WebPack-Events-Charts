@@ -71,7 +71,7 @@ async function sendFetch(data, isLocal) {
 				inputBox.classList.add('error');
 			}
 			console.error('SERVER ERROR', resJSON.error)
-			swal({ icon: 'error', text: error, title: 'Server error'})
+			swal({ icon: 'error', text: resJSON.error, title: 'Server error'})
 			return null;
 		}
 
