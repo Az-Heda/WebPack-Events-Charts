@@ -13,6 +13,31 @@ const chartData = {
 	},
 }
 
+const socket = new MySocket('ws://127.0.0.1:7789');
+socket.on('error', (err) => { console.error('SOCKET-ERROR', err) });
+socket.on('message', plotData);
+
+function plotData(data) {
+	console.log(data);
+	document.getElementById('query').innerText = `[${data.perf}]\n${data?.query || data?.error}`;
+	if (data?.error) {
+		if (!inputBox.classList.contains('error')) {
+			inputBox.classList.add('error');
+		}
+		console.error('SERVER ERROR', data.error)
+		swal({ icon: 'error', text: data.error, title: 'Server error'})
+		return null;
+	}
+
+	MyEvent.emit('get-chart-preview', data.data.filter((_, i) => { return i < 100 }));
+	MyEvent.emit('save-data', data.data.filter((_, i) => { return i < 100 }));
+	clearOnceEvents();
+	if (document.getElementById('tabs').classList.contains('hidden')) {
+		document.getElementById('tabs').classList.remove('hidden');
+	}
+	MyEvent.emit('get-charts', data.data.filter((_, i) => { return i < 100 }));
+}
+
 export function sendRequest(evt) {
 	const inputTag = document.getElementById('searchbar');
 	const param = { question: inputTag.value };
@@ -21,7 +46,9 @@ export function sendRequest(evt) {
 		if (!document.getElementById('tabs').classList.contains('hidden')) {
 			document.getElementById('tabs').classList.add('hidden');
 		}
-		sendFetch(param, true)
+		// sendFetch(param, true)
+		debugger;
+		socket.send('ask', { question: param.question })
 		lastTextSent = param.question;
 	}
 }

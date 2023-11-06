@@ -1,8 +1,10 @@
 {
-    "scripts": {
+	"scripts": {
         "build": "webpack",
 		"watch": "cls && webpack --watch",
-		"server": "cls && sanic server:app --host 127.0.0.1 --port 7788 --reload"
+		"server": "cls && sanic server:app --host 127.0.0.1 --port 7788 --reload",
+		"socket": "start cmd /MIN /C \"python mysocket.py\"",
+		"all": "npm run socket && npm run server"
     },
     "dependencies": {
         "apexcharts": "^3.44.0",

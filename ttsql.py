@@ -3,7 +3,7 @@ from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 from typing import List, Dict, Final
 import json
 
-modelDir : Final = 'model-northwind'
+modelDir : Final = 'model'
 
 class Model_V1:
 	def __init__(self) -> None:

@@ -68,27 +68,6 @@ CREATE TABLE Regions (
 	RegionDescription TEXT
 );
 
-CREATE TABLE Shippers (
-	ShipperID INTEGER,
-	CompanyName TEXT,
-	Phone TEXT
-);
-
-CREATE TABLE Suppliers (
-	SupplierID INTEGER,
-	CompanyName TEXT,
-	ContactName TEXT,
-	ContactTitle TEXT,
-	Address TEXT,
-	City TEXT,
-	Region TEXT,
-	PostalCode TEXT,
-	Country TEXT,
-	Phone TEXT,
-	Fax TEXT,
-	HomePage TEXT
-);
-
 CREATE TABLE Territories (
 	TerritoryID TEXT,
 	TerritoryDescription TEXT,

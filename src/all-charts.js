@@ -67,9 +67,12 @@ function areaChart(data) {
 
 function barChart(data) {
 	clearOnceEvents();
+	console.log('Inizio')
 	const renamed = structuredClone(data)
 		.map((item) => { return { x: item[Object.keys(item)[0]], y: item[Object.keys(item)[1]] } })
-		.sort((a, b) => { return (a.y > b.y) ? -1 : (a.y < b.y) ? 1 : 0});
+		.sort((a, b) => { return (a.y > b.y) ? -1 : (a.y < b.y) ? 1 : 0})
+		.filter((i) => { return !(!!i[0]) })
+	console.log({ renamed })
 	const container = document.getElementById('chartbar');
 	const options = {
 		chart: { type: 'bar', height, toolbar },
@@ -87,6 +90,9 @@ function barChart(data) {
 	const chart = new ApexCharts(container, options);
 	chart.render();
 	MyEvent.bind(container.getAttribute('id'), 'ONCE_clear-bar-chart', () => { chart.destroy() });
+	MyEvent.bind(container.getAttribute('id'), 'update-bar-chart-series', () => {
+		console.log('Event fired');
+	});
 	return chart;
 }
 
@@ -190,7 +196,18 @@ function treemapChart(data) {
 	if (!prodMode) { logMessage('Treemap chart', options, logStyle); }
 	const chart = new ApexCharts(container, options);
 	chart.render();
-	MyEvent.bind('charttreemap', 'ONCE_clear-treemap-chart', () => { chart.destroy() });
+	MyEvent.bind(container.getAttribute('id'), 'ONCE_clear-treemap-chart', () => { chart.destroy() });
+	MyEvent.bind(container.getAttribute('id'), 'get-treemap-chart', () => { return chart });
+	// MyEvent.bind(container.getAttribute('id'), 'testing', () => {
+	// 	chart.appendData([{ data: [
+	// 		{ x: 'A', y: 10000 },
+	// 		{ x: 'B', y: 24000 },
+	// 		{ x: 'C', y: 4000 },
+	// 		{ x: 'D', y: 37000 },
+	// 		{ x: 'E', y: 21000 },
+	// 		{ x: 'F', y: 7000 },
+	// 	]}])
+	// });
 	return chart;
 }
 
