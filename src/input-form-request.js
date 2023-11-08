@@ -28,9 +28,9 @@ function plotData(data) {
 		swal({ icon: 'error', text: data.error, title: 'Server error'})
 		return null;
 	}
-	
+
 	let df = new dfd.DataFrame(data.data);
-	MyEvent.bind('query', 'last-data-backup', () => { return df })
+	MyEvent.bind('query', 'get-danfo', () => { return df })
 
 	// df = df.iloc({ rows: df['name'].str.trim().str.len().gt(1).and(df['name'].str.trim().ne('Valore mancante')) });
 
