@@ -6,9 +6,9 @@
 		"socket": "start cmd /MIN /C \"python mysocket.py\"",
 		"all": "npm run socket && npm run server",
 
-		"prestart": "wt -w \"ChartWithEvents\" new-tab -d \".\" --tabColor #0AA --title \"Socket\" PowerShell -c \"python mysocket.py\"",
-		"start": "wt -w \"ChartWithEvents\" new-tab -d \".\" --tabColor #FA0 --title \"Server\" PowerShell -c \"sanic server:app --host 127.0.0.1 --port 7788 --reload\"",
-		"poststart": "wt -w \"ChartWithEvents\" ft -t 1"
+		"prestart": "wt -w \"ChartWithEvents\" new-tab -d \".\" --tabColor #0AA --title \"Python - Socket\" PowerShell -c \"python mysocket.py\"",
+		"start": "wt -w \"ChartWithEvents\" new-tab -d \".\" --tabColor #F5A --title \"Node - WebPack\" PowerShell -c \"npm run watch\"",
+		"poststart": "wt -w \"ChartWithEvents\" new-tab -d \".\" --tabColor #FA0 --title \"Python - Server\" PowerShell -c \"sanic server:app --host 127.0.0.1 --port 7788 --reload\""
     },
     "dependencies": {
         "apexcharts": "^3.44.0",
