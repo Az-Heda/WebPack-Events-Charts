@@ -7,7 +7,7 @@ const chartData = {
 	_data: [],
 	_time: new Date(),
 	get data() { return this._data; },
-	set data(v) {
+	set data(v) {	
 		this._time = new Date();
 		this._data = v;
 	},
@@ -28,7 +28,13 @@ function plotData(data) {
 		swal({ icon: 'error', text: data.error, title: 'Server error'})
 		return null;
 	}
+	
+	let df = new dfd.DataFrame(data.data);
+	MyEvent.bind('query', 'last-data-backup', () => { return df })
 
+	// df = df.iloc({ rows: df['name'].str.trim().str.len().gt(1).and(df['name'].str.trim().ne('Valore mancante')) });
+
+	
 	MyEvent.emit('get-chart-preview', data.data.filter((_, i) => { return i < 100 }));
 	MyEvent.emit('save-data', data.data.filter((_, i) => { return i < 100 }));
 	clearOnceEvents();
@@ -47,7 +53,6 @@ export function sendRequest(evt) {
 			document.getElementById('tabs').classList.add('hidden');
 		}
 		// sendFetch(param, true)
-		debugger;
 		socket.send('ask', { question: param.question })
 		lastTextSent = param.question;
 	}

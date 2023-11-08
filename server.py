@@ -5,6 +5,7 @@ import pandas as pd
 from time import time
 import sqlite3
 from ttsql import Model_V1 as Model, modelDir
+import json
 
 
 staticDir1 : Final = './dist'
@@ -28,28 +29,9 @@ def homepage(req : Request):
 	return response.redirect('/website/index.html')
 
 
-# @api.route("ask", methods=["POST"])
-# async def ask(req : Request):
-# 	response : dict = None
-# 	start : float = time()
-# 	try:
-# 		assert 'question' in req.json
-# 		sql_query : str = model.gen_sql(req.json.get('question'))
-# 		data : pd.DataFrame = pd.read_sql(sql_query, conn).map(lambda x: x if not pd.isna(x) else 'Valore mancante')
-# 		response = {
-# 			'data': data.to_dict(orient='records'),
-# 			'metadata': [type(j).__name__ for j in data.iloc[0]],
-# 			'query': sql_query,
-# 		}
-# 	except Exception as e:
-# 		response = {'error': str(e)}
-# 	end = time()
-# 	return json({'perf': f'{(end-start)*1000:.3f} ms', **response})
-
-
 @api.route('tables', methods=['GET'])
 async def tables(req : Request):
-	return response.json({}, status=200)
+	return response.json(json.loads(open(f'{modelDir}/tables.json', 'r').read()), status=200)
 	# return json(model.get_tables())
 
 
