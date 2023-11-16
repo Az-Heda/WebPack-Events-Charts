@@ -23,9 +23,9 @@ export function drawCard() {
 		let template = new Templating(cardTemplate, d);
 		const t = new Tag('div')
 		.addClass('col-lg-4', 'col-md-4', 'col-sm-4')
-		.html(template.parse())
+		.html(template.template)
 		.appendTo(container.node);
 	});
 }
 
-drawCard();
+// drawCard();
