@@ -13,8 +13,6 @@ allowedTables : Final = [
 ]
 
 
-
-
 class ModelV1:
 	def __init__(self) -> None:
 		self.device : torch.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -36,11 +34,8 @@ class ModelV1:
 		
 	def setTables(self, server: str, db: str) -> None:
 		schema : dict[str, list[dict[str, str]]] = functions.getSchema(server=server, db=db, allowed=allowedTables)
-		sql : str = functions.dict2sql(schema)
-		self.tables = sql
-		with open('output-table-schema.sql', 'w') as file:
-			file.write(sql)
-		return sql
+		self.tables = functions.dict2sql(schema)
+		return self.tables
 
 	def getTables(self) -> dict[str, dict[str, str]]:
 		return functions.sql2dict(self.tables) if self.tables != None else {}

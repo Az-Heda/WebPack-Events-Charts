@@ -1,0 +1,17 @@
+{
+	"scripts": {
+        "build": "webpack",
+		"watch": "cls && webpack --watch",
+		
+		"prestart": "wt -w \"ChartWithEvents\" new-tab -d \".\" --tabColor #F5A --title \"Node - WebPack\" PowerShell -c \"npm run watch\"",
+		"start": "wt -w \"ChartWithEvents\" new-tab -d \".\" --tabColor #FA0 --title \"Python - Server\" PowerShell -c \"python server.py\"",
+		"poststart": "start chrome http://10.160.4.113:7788"
+    },
+    "dependencies": {
+        "apexcharts": "^3.44.0",
+        "webpack": "^5.89.0"
+    },
+    "devDependencies": {
+        "webpack-cli": "^5.1.4"
+    }
+}

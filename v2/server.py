@@ -63,7 +63,6 @@ def routingHOMEPAGE_GET(req : Request) -> response.HTTPResponse:
 
 @api.route('tables', methods=['GET'])
 def routingTABLES_GET(req : Request) -> response.HTTPResponse:
-	# return response.json(ActiveModel.get_tables(), status=200)
 	return response.json(ActiveModel.getTables(), status=200)
 
 @api.route('/ask', methods=['POST'])
@@ -80,20 +79,14 @@ def routingASK_POST(req : Request):
 			'db': req.json.get('database'),
 		}
 		ActiveModel.setTables(**connData)
-		sql_query = ActiveModel.generateSQL(req.json.get('question'))
+		sql_query : str = ActiveModel.generateSQL(req.json.get('question'))
 		sql_query = functions.addTableSchema(query=sql_query, **connData)
-		print('-'*100)
-		print(sql_query)
-		print('-'*100)
-		data = functions.dbConnection(query=sql_query, **connData).map(lambda x : x if not pd.isna(x) else 'Valore mancante')
-		
+		data : pd.DataFrame = functions.dbConnection(query=sql_query, **connData).map(lambda x : x if not pd.isna(x) else 'Valore mancante')
 		res = {
 			'data': data.to_dict(orient='records'),
 			'metadata': [ type(j).__name__ for j in data.iloc[0] ],
 		}
 	except Exception as e:
-		# raise e
-		# print(e)
 		res = { 'error': str(e), }
 	end = time()
 	
@@ -123,4 +116,4 @@ def routingASK_POST(req : Request):
 app.blueprint([site, api, images])
 if __name__ == '__main__':
 	os.system('cls')
-	app.run(host=IP, port=PORT, auto_reload=True, dev=True)
+	app.run(host=IP, port=PORT, auto_reload=True, dev=False)
