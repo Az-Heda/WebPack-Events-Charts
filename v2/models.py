@@ -4,7 +4,6 @@ from typing import List, Dict, Final
 import functions
 import json
 
-modelDir : Final = 'models/first'
 allowedTables : Final = [
 	'dw.DIM_CRM_AnagraficaClienti',
 	'dw.DIM_HD_Chiamate',
@@ -23,7 +22,6 @@ class ModelV1:
 		self.model = self.model.to(self.device)
 		self.tokenizer : AutoTokenizer.PreTrainedTokenizer | AutoTokenizer.PreTrainedTokenizerFast = AutoTokenizer.from_pretrained('t5-small')
 		self.tables : str | None = None
-		# self.tables = open(f'{modelDir}/create.sql').read()
 
 	def generateSQL(self, query : str) -> str:
 		if self.tables == None:

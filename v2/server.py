@@ -3,7 +3,7 @@ from sanic_cors import CORS
 from typing import Final, Dict
 import pandas as pd
 from time import time
-from models import ModelV1 as Model, modelDir, allowedTables
+from models import ModelV1 as Model, allowedTables
 import functions
 import json
 import os
