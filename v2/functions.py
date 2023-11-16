@@ -5,28 +5,44 @@ import re
 
 # +---------------------------------------------------------------------------------------------------------------+ #
 
-def dbConnection(server : str, db : str, query : str) -> pd.DataFrame:
-	driver : str = 'ODBC+DRIVER+17+for+SQL+Server'
-	engine_stmt : str = "mssql+pyodbc://@%s/%s?driver=%s&trusted_connection=yes" % (server, db , driver )
-	engine : sqlalchemy.Engine = sqlalchemy.create_engine(engine_stmt)
-	return pd.read_sql(query, con=engine)
+def cached(f : Callable[[any,], any]):
+	storedValues : dict[tuple[str], any] = {}
+	def cf(*args, **kwargs):
+		hashableKey : str = str(tuple(sorted([*map(lambda x: str(x), list(tuple(args) + tuple(kwargs.keys()) + tuple(kwargs.values())))])))
+		if hashableKey in storedValues:
+			return storedValues.get(hashableKey)		
+		storedValues[hashableKey] = f(*args, **kwargs)
+		return storedValues[hashableKey]
+	return cf
 
 # +---------------------------------------------------------------------------------------------------------------+ #
 
-def getSchema(server : str, db : str, allowed: list[str] = []) -> dict[str, list[str]]:
+def dbConnection(server : str, db : str, query : str, eng : str = 'mssql+pyodbc') -> pd.DataFrame:
+	driver : str = 'ODBC+DRIVER+17+for+SQL+Server'
+	engine_stmt : str = "%s://@%s/%s?driver=%s&trusted_connection=yes" % (eng, server, db , driver )
+	engine : sqlalchemy.Engine = sqlalchemy.create_engine(engine_stmt)
+	return pd.read_sql(query, con=engine)
+
+dbConnection = cached(dbConnection)
+
+# +---------------------------------------------------------------------------------------------------------------+ #
+
+def getSchema(server : str, db : str, allowed: list[str] = []) -> dict[str, list[dict[str, str]]] :
 	query : str = 'SELECT * FROM INFORMATION_SCHEMA.COLUMNS ORDER BY TABLE_NAME, ORDINAL_POSITION'
 	df : pd.DataFrame = dbConnection(query=query, server=server, db=db)
 	tables : dict[str, list[str]] = {}
-	names : list[str] = [*set([ x for x in df['TABLE_NAME'] ])]
+	df['path'] = df['TABLE_SCHEMA'] + '.' + df['TABLE_NAME'] 
+	names : list[str] = [*set([ x for x in df['path'] ])]
 	for name in names: 
 		if len(allowed) > 0 and name not in allowed:
 			continue
-		tables[name] = [ { r['COLUMN_NAME'] : r['DATA_TYPE'] } for r in df[['COLUMN_NAME', 'DATA_TYPE']][df['TABLE_NAME'] == name].to_dict(orient='records')]
+		tables[name] = [ { r['COLUMN_NAME'] : r['DATA_TYPE'] } for r in df[['COLUMN_NAME', 'DATA_TYPE']][df['path'] == name].to_dict(orient='records')]
+	print(tables)
 	return tables
 
 # +---------------------------------------------------------------------------------------------------------------+ #
 
-def sql2dict(sql) -> dict[str, dict[str, str]]:
+def sql2dict(sql) -> dict[str, dict[str, str]] :
 	rows : list[list[str]] = [ x.split('\n') for x in sql.split(';') ]
 	data : dict[str, dict[str, str]] = {}
 	lastAdded : str = ''
@@ -46,6 +62,8 @@ def sql2dict(sql) -> dict[str, dict[str, str]]:
 			continue
 	return data
 
+sql2dict = cached(sql2dict)
+
 # +---------------------------------------------------------------------------------------------------------------+ #
 
 def dict2sql(d : dict[str, list[dict[str, str]]], includeOnly : list[str] = []) -> str:
@@ -54,28 +72,36 @@ def dict2sql(d : dict[str, list[dict[str, str]]], includeOnly : list[str] = []) 
 		if len(includeOnly) > 0 and name not in includeOnly:
 			continue
 		columns : list[dict[str, str]] = d[name]
-		sql : str = f'CREATE TABLE [{name}] (\n'
+		sql : str = f'CREATE TABLE [{name.split(".")[-1]}] (\n'
 		for c in columns:
 			k : str = [*c.keys()][0]
 			v : str = [*c.values()][0]
-			sql += f'\t[{k}] {v.upper()},\n'
+			sql += f'\t{k} {v.upper()}'
+			if columns.index(c) != len(columns)-1:
+				sql += ','
+			sql += '\n'
 		sql += ');'
 		if [*d.keys()].index(name) != len([*d.keys()]) - 1:
 			sql += '\n\n'
 		sqlFile += sql
 	return sqlFile
 
-# +---------------------------------------------------------------------------------------------------------------+ #
 
-def cached(f : Callable[[any,], any]):
-	storedValues : dict[tuple[str], any] = {}
-	def cf(*args, **kwargs):
-		hashableKey : tuple[str] = tuple(sorted([*map(lambda x: str(x), list(tuple(args) + tuple(kwargs.keys()) + tuple(kwargs.values())))]))
-		if hashableKey in storedValues:
-			return storedValues.get(hashableKey)
-		storedValues[hashableKey] = f(*args, **kwargs)
-		return storedValues[hashableKey]
-	return cf
+dict2sql = cached(dict2sql)
 
 # +---------------------------------------------------------------------------------------------------------------+ #
 
+def addTableSchema(query : str, server : str, db : str) -> str:
+	schemaQuery : str = 'SELECT TABLE_SCHEMA, TABLE_NAME FROM INFORMATION_SCHEMA.COLUMNS GROUP BY TABLE_SCHEMA, TABLE_NAME'
+	df : pd.DataFrame = dbConnection(query=schemaQuery, server=server, db=db)
+	df['JOINED'] = '[' + df['TABLE_SCHEMA'] + ']' + '.' + '[' + df['TABLE_NAME'] + ']'
+	for v in df['JOINED']:
+		query = query.replace(v.split('.')[1], v)
+	return query
+
+addTableSchema = cached(addTableSchema)
+
+# +---------------------------------------------------------------------------------------------------------------+ #
+
+
+# +---------------------------------------------------------------------------------------------------------------+ #

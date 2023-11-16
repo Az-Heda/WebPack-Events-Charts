@@ -64,32 +64,45 @@ def routingHOMEPAGE_GET(req : Request) -> response.HTTPResponse:
 @api.route('tables', methods=['GET'])
 def routingTABLES_GET(req : Request) -> response.HTTPResponse:
 	# return response.json(ActiveModel.get_tables(), status=200)
-	return ActiveModel.getTables()
+	return response.json(ActiveModel.getTables(), status=200)
 
 @api.route('/ask', methods=['POST'])
 def routingASK_POST(req : Request):
 	res = {}
 	start : float = time()
+	sql_query : str | None = None
 	try:
 		assert 'question' in req.json
 		assert 'server' in req.json
 		assert 'database' in req.json
-		ActiveModel.setTables(server=req.json.get('server'), db=req.json.get('database'))
+		connData = {
+			'server': req.json.get('server'),
+			'db': req.json.get('database'),
+		}
+		ActiveModel.setTables(**connData)
 		sql_query = ActiveModel.generateSQL(req.json.get('question'))
-		data = functions.dbConnection(server=req.json.get('server'), db=req.json.get('database'), query=sql_query).map(
-			lambda x : x if not pd.isna(x) else 'Valore mancante'
-		)
+		sql_query = functions.addTableSchema(query=sql_query, **connData)
+		print('-'*100)
+		print(sql_query)
+		print('-'*100)
+		data = functions.dbConnection(query=sql_query, **connData).map(lambda x : x if not pd.isna(x) else 'Valore mancante')
 		
 		res = {
 			'data': data.to_dict(orient='records'),
 			'metadata': [ type(j).__name__ for j in data.iloc[0] ],
-			'query': sql_query
 		}
 	except Exception as e:
-		res = { 'error': str(e) }
+		# raise e
+		# print(e)
+		res = { 'error': str(e), }
 	end = time()
 	
-	return response.json({'perf': f'{(end - start) * 1000:.3f} ms', **res})
+	return response.json({
+		'perf': f'{(end - start) * 1000:.3f} ms',
+		'query': sql_query,
+		'question': req.json.get('question', None),
+		**res
+	})
 
 
 
