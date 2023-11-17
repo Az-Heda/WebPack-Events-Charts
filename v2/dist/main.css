@@ -1,0 +1,114 @@
+:root {
+	--chart-zone: #AAAAAA77;
+	--history-zone: #777777aa;
+}
+
+
+.main-container {
+	transition: padding-right 1s ease-in-out;
+	background-color: var(--chart-zone);
+	position: relative;
+	left: 0;
+	top: 0;
+	width: 98vw;
+	overflow: hidden;
+	padding-left: 2vmin;
+	padding-right: 22vw;
+	text-align: justify;
+}
+
+.history {
+	background-color: var(--history-zone);
+	z-index: 2;
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 88vh;
+}
+
+.history:not(.hidden) {
+	transition: all 1s ease-in-out;
+	width: 20vw;
+	opacity: 1;
+	overflow-x: hidden;
+}
+
+.history.hidden {
+	transition: all 1s ease-in-out;
+	width: 0px !important;
+	opacity: 0;
+	z-index: 0;
+	overflow: hidden;
+}
+
+
+.main-container:has( > .history:not(.hidden) ) {
+	padding-right: 22vw;
+}
+
+.main-container:has( > .history.hidden ) {
+	padding-right: 6vmin;
+}
+
+
+#main-content {
+	margin-top: 2vmin;
+	margin-bottom: 2vmin;
+	background-color: #999;
+	height: calc(100% - (2vmin * 2));
+}
+
+
+
+
+
+
+
+
+
+.trigger-side-menu {
+	z-index: 1000;
+	position: absolute;
+	top: 0;
+	right: 0;
+	transform: translate(-20%, 15%);
+	cursor: pointer;
+	display: inline-block;
+	transition: right 1s;
+	background-color: transparent;
+}
+
+.bar1, .bar2, .bar3 {
+	width: 35px;
+	height: 5px;
+	margin: 6px 0;
+	background-color: #333;
+	transition: transform 0.4s, opacity 0.4s;
+}
+
+.change-icon .bar1 {
+	transform: translate(0, 11px) rotate(-45deg);
+}
+
+.change-icon .bar2 {
+	opacity: 0;
+}
+
+.change-icon .bar3 {
+	transform: translate(0, -11px) rotate(45deg);
+}
+
+
+.user-notification {
+	transition: all 0.5s;
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	z-index: 100;
+	opacity: 0.4;
+	padding: 20px;
+}
+
+.user-notification:hover {
+	opacity: 1;
+}

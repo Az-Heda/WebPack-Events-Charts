@@ -37,7 +37,8 @@ api : Blueprint = Blueprint('api', url_prefix='/api')
 images : Blueprint = Blueprint('images', url_prefix='/img')
 
 app = Sanic(__name__)
-CORS(app)
+
+CORS(app, resources={r"/*": {'origins': '*'}})
 
 
 # +---------------------------------------------------------------------------------+

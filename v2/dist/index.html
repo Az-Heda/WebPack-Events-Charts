@@ -8,6 +8,7 @@
 		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 		<link rel="stylesheet" type="text/css" href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" />
 		<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/azheda-utils-v2@latest/Client/_css/grid.css"/>
+		<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/azheda-utils-v2@latest/Client/_css/units.css"/>
 		<link rel="stylesheet" type="text/css" href="ui.css"/>
 		<link rel="stylesheet" type="text/css" href="main.css"/>
 
@@ -15,6 +16,7 @@
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 		<script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/danfojs@1.1.2/lib/bundle.min.js"></script>
+		<script src="https://unpkg.com/sweetalert@2.1.2/dist/sweetalert.min.js"></script>
 
 		<script src="https://cdn.jsDelivr.net/npm/azheda-utils-v2@latest/Client/BetterDom/betterdom.js"></script>
 		<script src="https://cdn.jsDelivr.net/npm/azheda-utils-v2@latest/Client/CachedFunction/cachedfunction.js"></script>
@@ -26,23 +28,54 @@
 		<script src="https://cdn.jsDelivr.net/npm/azheda-utils-v2@latest/Client/Tag/tag.js"></script>
 		<script src="https://cdn.jsDelivr.net/npm/azheda-utils-v2@latest/Client/Template/template.js"></script>
 		<script src="https://cdn.jsDelivr.net/npm/azheda-utils-v2@latest/Client/Utils/utils.js"></script>
+
+		<script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js"></script>
+		<script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js"></script>
 	</head>
 	<body>
-		<div class="container">
-			<div class="row" style="margin-top: 10px;">
-				<div class="col-lg-2 col-md-2 col-sm-2"></div>
+		<div class="alert alert-warning alert-dismissible user-notification">
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+			<strong>Attenzione!</strong><hr>In mancanza dell'hardware necessario<br> sono disponibili solo alcune domande
+		</div>
+
+		<div class="container h10v">
+			<div class="mygrid-row" style="margin-top: 10px;">
+				<div class="mygrid-20"></div>
 				<div class="inputForm" style="width: 100%;">
 					<input class="mainInput input-alt" type="text" id="user-question" placeholder="Fai una domanda!">
 					<span class="input-border input-border-alt"></span>
 				</div>
-				<div class="col-lg-2 col-md-2 col-sm-2"></div>
+				<div class="mygrid-20"></div>
+			</div>
+		</div>
+
+		<div class="container-fluid">
+			<div class="mygrid-row h88v">
+				<div class="w98p main-container h88v" id="main-container">
+					<div id="main-content">
+						<!----------------------------------------------------------------------------------------------------------->
+						
+						<!----------------------------------------------------------------------------------------------------------->
+					</div>
+					<div class="trigger-side-menu" onclick="triggerMenu(this)">
+						<div class="bar1"></div>
+						<div class="bar2"></div>
+						<div class="bar3"></div>
+					</div>
+					<div class="mygrid-30 history hidden" id="history-queries"></div>
+				</div>
 			</div>
 		</div>
 
 		<!-- https://uiverse.io/eslam-hany/selfish-bobcat-73 -->
-
-		<script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js"></script>
-		<script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js"></script>
+		<script>
+			function triggerMenu(el) {
+				let menuBar = document.getElementById('history-queries');
+				
+				el.classList.toggle('change-icon');
+				menuBar.classList.toggle('hidden')
+			}
+		</script>
 		<script src="bundle.js"></script>	
 	</body>
 </html>
