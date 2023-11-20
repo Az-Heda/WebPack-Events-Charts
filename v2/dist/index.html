@@ -17,11 +17,13 @@
 		<script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/danfojs@1.1.2/lib/bundle.min.js"></script>
 		<script src="https://unpkg.com/sweetalert@2.1.2/dist/sweetalert.min.js"></script>
-
+		<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+		
 		<script src="https://cdn.jsDelivr.net/npm/azheda-utils-v2@latest/Client/BetterDom/betterdom.js"></script>
 		<script src="https://cdn.jsDelivr.net/npm/azheda-utils-v2@latest/Client/CachedFunction/cachedfunction.js"></script>
 		<script src="https://cdn.jsDelivr.net/npm/azheda-utils-v2@latest/Client/Colors/colors.js"></script>
 		<script src="https://cdn.jsDelivr.net/npm/azheda-utils-v2@latest/Client/DevTools/devtools.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/azheda-utils-v2@latest/Client/ObjectMerger/objectmerger.js"></script>
 		<script src="https://cdn.jsDelivr.net/npm/azheda-utils-v2@latest/Client/Event/event.js"></script>
 		<script src="https://cdn.jsDelivr.net/npm/azheda-utils-v2@latest/Client/Storage/storage.js"></script>
 		<script src="https://cdn.jsDelivr.net/npm/azheda-utils-v2@latest/Client/Swap/swap.js"></script>
@@ -33,9 +35,12 @@
 		<script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js"></script>
 	</head>
 	<body>
-		<div class="alert alert-warning alert-dismissible user-notification">
+		<div class="alert alert-warning alert-dismissible user-notification dhidden" id="warning-alert">
 			<button type="button" class="close" data-dismiss="alert">&times;</button>
-			<strong>Attenzione!</strong><hr/>In mancanza dell'hardware necessario<br/>sono disponibili solo alcune domande
+			<strong>Attenzione!</strong>
+			<hr/>In mancanza dell'hardware necessario
+			<br/>sono disponibili solo alcune domande; 
+			<br/>per vederle clicca <span id="valid-questions-lnk" class="text-info">QUI</span>
 		</div>
 
 		<div class="container h10v">
@@ -54,27 +59,37 @@
 				<div class="w98p main-container h88v" id="main-container">
 					<div id="main-content">
 						<!----------------------------------------------------------------------------------------------------------->
-						CARD ZONE
+						
 						<!----------------------------------------------------------------------------------------------------------->
 					</div>
-					<div class="trigger-side-menu" onclick="triggerMenu(this)">
+					<div class="trigger-side-menu" id="menu-trigger">
 						<div class="bar1"></div>
 						<div class="bar2"></div>
 						<div class="bar3"></div>
 					</div>
-					<div class="mygrid-30 history hidden" id="history-queries"></div>
+					<div class="mygrid-30 history hidden" id="history-queries">
+						<div class="history-content">** Domanda **<br/>01/01/2023</div>
+					</div>
 				</div>
 			</div>
 		</div>
 
 		<!-- https://uiverse.io/eslam-hany/selfish-bobcat-73 -->
 		<script>
-			throw new Error('Da fare anonima')
-			function triggerMenu(el) {
+			// throw new Error('Da fare anonima')
+			// function triggerMenu(el) {
+			// 	let menuBar = document.getElementById('history-queries');
+			// 	el.classList.toggle('change-icon');
+			// 	menuBar.classList.toggle('hidden')
+			// }
+			(async () => {
+				let menuToggler = document.getElementById('menu-trigger');
 				let menuBar = document.getElementById('history-queries');
-				el.classList.toggle('change-icon');
-				menuBar.classList.toggle('hidden')
-			}
+				menuToggler.onclick = () => {
+					menuToggler.classList.toggle('change-icon');
+					menuBar.classList.toggle('hidden');
+				}
+			})();
 		</script>
 		<script src="bundle.js"></script>	
 	</body>

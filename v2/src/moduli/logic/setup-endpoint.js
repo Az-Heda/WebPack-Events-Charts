@@ -1,4 +1,4 @@
-import { SHOW_LOGIN_FORM } from "../config";
+import { SHOW_LOGIN_FORM, ASK_EVEN_IF_SAVED_TO_CONFIG} from "../config";
 
 function loginForm(params={}) {
 	const container = `
@@ -24,14 +24,24 @@ function loginForm(params={}) {
 	const config = {
 		title: 'Collegamento con il database',
 		content: new Tag('div').html(container).node,
-		button: false
+		button: false,
+		closeOnEsc: true,
+		closeOnClickOutside: true
 	}
 	setTimeout(() => {
 		let host = document.getElementById('get-host');
 		let db = document.getElementById('get-db');
 		let btn = document.getElementById('form-validator');
 		let form = document.getElementById('setup-form');
-		
+
+		const locstorKey = 'query-headers';
+		const locstorDur = 1000 * 60 * 60 * 24 * 7 * 4; // 4 Settimane
+		let currentValue = MyStorage.getCookie(locstorKey);
+		if (currentValue) {
+			host.value = currentValue.server;
+			db.value = currentValue.database;
+		}
+		host.focus();
 		form.addEventListener('submit', (event) => {
 			event.preventDefault();
 			if (db.value.length == 0) return db.focus();
@@ -39,6 +49,7 @@ function loginForm(params={}) {
 
 			const values = { server: host.value, database: db.value }
 			if (swal.getState().isOpen) swal.close();
+			MyStorage.setCookie(locstorKey, values, locstorDur)
 			BetterDom.archive.connection = values;
 		})
 	}, 100)
@@ -46,25 +57,10 @@ function loginForm(params={}) {
 }
 
 
-function parseLoginForm() {
-	
-
-	if (host.values && db.values) {
-		console.log('Both')
-	} else {
-		console.log('One or none')
-		if (host.value || db.value) {
-			console.log('One')
-			let item = [host, db][+!!host];
-			swal.close()
-		}
-		else {
-			console.warn('idk')
-		}
-	}
-	BetterDom.archive.database = { host, db };
-}
-
 if (SHOW_LOGIN_FORM) {
-	swal({ ...loginForm() })
+	if (MyStorage.getCookie('query-headers') && !ASK_EVEN_IF_SAVED_TO_CONFIG) { BetterDom.archive.connection = MyStorage.getCookie('query-headers');}
+	else { swal({ ...loginForm() }) }
+	// if (!(ASK_EVEN_IF_SAVED_TO_CONFIG && MyStorage.getCookie('query-headers'))) {
+		
+	// }
 }

@@ -5,11 +5,12 @@ import functions
 import json
 
 allowedTables : Final = [
-	'dw.DIM_CRM_AnagraficaClienti',
 	'dw.DIM_HD_Chiamate',
-	# 'dw.DIM_EDI_ArticoliMaster',
+	# 'dw.DIM_CRM_AnagraficaClienti',
 	# 'dw.FAT_EDI_EditoriaPluriennale',
-	# 'dw.FAT_EDI_Movimenti'
+	# 'dw.DIM_CRM_Geografia',
+	# 'dw.DIM_EDI_ArticoliMaster',
+	# 'dw.FAT_EDI_Movimenti',
 ]
 
 
@@ -35,6 +36,11 @@ class ModelV1:
 	def setTables(self, server: str, db: str) -> None:
 		schema : dict[str, list[dict[str, str]]] = functions.getSchema(server=server, db=db, allowed=allowedTables)
 		self.tables = functions.dict2sql(schema)
+		
+		with open('./testing/db-output-schema.json', 'w') as file:
+			file.write(json.dumps(schema, indent=4))
+		with open('./testing/db-output-create.sql', 'w') as file:
+			file.write(self.tables)
 		return self.tables
 
 	def getTables(self) -> dict[str, dict[str, str]]:

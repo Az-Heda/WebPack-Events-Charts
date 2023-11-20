@@ -2,6 +2,7 @@ from typing import Callable
 import sqlalchemy
 import pandas as pd
 import re
+import sqlglot
 
 # +---------------------------------------------------------------------------------------------------------------+ #
 
@@ -37,7 +38,6 @@ def getSchema(server : str, db : str, allowed: list[str] = []) -> dict[str, list
 		if len(allowed) > 0 and name not in allowed:
 			continue
 		tables[name] = [ { r['COLUMN_NAME'] : r['DATA_TYPE'] } for r in df[['COLUMN_NAME', 'DATA_TYPE']][df['path'] == name].to_dict(orient='records')]
-	print(tables)
 	return tables
 
 # +---------------------------------------------------------------------------------------------------------------+ #
@@ -103,5 +103,15 @@ addTableSchema = cached(addTableSchema)
 
 # +---------------------------------------------------------------------------------------------------------------+ #
 
+def addAliases(query : str) -> str:
+	for column in sqlglot.parse_one(query, dialect='tsql'):
+		cname = str(column)
+		pattern = r'[a-zA-Z0-9\(\)\[\]]+ (as|AS|aS|As) [a-zA-Z0-9\(\)\[\]]+'
+		m = re.match(pattern=pattern, string=cname)
+		if m is None:
+			query = query.replace(cname, f'{cname} AS \'{cname}\'', 1)
+	return query
+
+addAliases = cached(addAliases)
 
 # +---------------------------------------------------------------------------------------------------------------+ #

@@ -2,6 +2,7 @@
 	"scripts": {
         "build": "webpack",
 		"watch": "cls && webpack --watch",
+		"change-index.js": "cls && nodemon --ext py,js --ignore index.js index-changer.py",
 		
 		"prestart": "wt -w \"ChartWithEvents\" new-tab -d \".\" --tabColor #F5A --title \"Node - WebPack\" PowerShell -c \"npm run watch\"",
 		"start": "wt -w \"ChartWithEvents\" new-tab -d \".\" --tabColor #FA0 --title \"Python - Server\" PowerShell -c \"python server.py\"",

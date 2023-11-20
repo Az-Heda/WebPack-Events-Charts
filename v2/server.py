@@ -82,6 +82,7 @@ def routingASK_POST(req : Request):
 		ActiveModel.setTables(**connData)
 		sql_query : str = ActiveModel.generateSQL(req.json.get('question'))
 		sql_query = functions.addTableSchema(query=sql_query, **connData)
+		sql_query = functions.addAliases(query=sql_query)
 		data : pd.DataFrame = functions.dbConnection(query=sql_query, **connData).map(lambda x : x if not pd.isna(x) else 'Valore mancante')
 		res = {
 			'data': data.to_dict(orient='records'),

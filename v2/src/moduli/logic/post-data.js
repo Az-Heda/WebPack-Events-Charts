@@ -1,4 +1,4 @@
-import { AI_ENDPOINT } from "../config";
+import { AI_ENDPOINT, CONVERT_TO_DANFO } from "../config";
 const userInput = document.getElementById('user-question');
 
 export async function fetchData() {
@@ -29,10 +29,24 @@ export async function fetchData() {
 	}
 }
 
+function parsedData(inputData) {
+	const { perf, data, metadata, query, question, error } = inputData;
+	// if (error) throw new Error(error);
+	BetterDom.archive.result = {
+		perf,
+		query,
+		question,
+		metadata,
+		data: (CONVERT_TO_DANFO) ? new dfd.DataFrame(data) : data,
+	}
+	const ct = document.querySelector('div.tab-content div.active').getAttribute('chartType');
+	MyEvent.emit('init-charts', BetterDom.archive.result, ct);
+}
+
 
 userInput.addEventListener('keyup', (event) => {
 	event.preventDefault();
 	if (event.keyCode === 13) { // Enter
-		fetchData().then(console.warn).catch(console.error)
+		fetchData().then(parsedData);
 	}
 })
