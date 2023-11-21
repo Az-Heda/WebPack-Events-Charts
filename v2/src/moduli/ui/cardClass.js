@@ -35,6 +35,8 @@ export class MyCard {
 	}
 
 	export() {
+		console.log(this._config);
+		return;
 		// { perf, query, question, metadata, data }
 		const { query, question } = this._config;
 		console.log(IDFromString(query.toLowerCase()), query)

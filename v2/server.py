@@ -71,25 +71,27 @@ def routingASK_POST(req : Request):
 	res = {}
 	start : float = time()
 	sql_query : str | None = None
-	try:
-		assert 'question' in req.json
-		assert 'server' in req.json
-		assert 'database' in req.json
-		connData = {
-			'server': req.json.get('server'),
-			'db': req.json.get('database'),
-		}
-		ActiveModel.setTables(**connData)
-		sql_query : str = ActiveModel.generateSQL(req.json.get('question'))
-		sql_query = functions.addTableSchema(query=sql_query, **connData)
-		sql_query = functions.addAliases(query=sql_query)
-		data : pd.DataFrame = functions.dbConnection(query=sql_query, **connData).map(lambda x : x if not pd.isna(x) else 'Valore mancante')
-		res = {
-			'data': data.to_dict(orient='records'),
-			'metadata': [ type(j).__name__ for j in data.iloc[0] ],
-		}
-	except Exception as e:
-		res = { 'error': str(e), }
+	# try:
+	assert 'question' in req.json
+	assert 'server' in req.json
+	assert 'database' in req.json
+	connData = {
+		'server': req.json.get('server'),
+		'db': req.json.get('database'),
+	}
+	ActiveModel.setTables(**connData)
+	sql_query : str = ActiveModel.generateSQL(req.json.get('question'))
+	# sql_query = functions.braketAdjuster(s=sql_query)
+	sql_query = functions.addTableSchema(query=sql_query, **connData)
+	sql_query = functions.addAliases(query=sql_query)
+
+	data : pd.DataFrame = functions.dbConnection(query=sql_query, **connData).map(lambda x : x if not pd.isna(x) else 'Valore mancante')
+	res = {
+		'data': data.to_dict(orient='records'),
+		'metadata': [ type(j).__name__ for j in data.iloc[0] ],
+	}
+	# except Exception as e:
+	#	res = { 'error': str(e), }
 	end = time()
 	
 	return response.json({

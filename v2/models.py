@@ -5,8 +5,8 @@ import functions
 import json
 
 allowedTables : Final = [
+	'dw.DIM_CRM_AnagraficaClienti',
 	'dw.DIM_HD_Chiamate',
-	# 'dw.DIM_CRM_AnagraficaClienti',
 	# 'dw.FAT_EDI_EditoriaPluriennale',
 	# 'dw.DIM_CRM_Geografia',
 	# 'dw.DIM_EDI_ArticoliMaster',

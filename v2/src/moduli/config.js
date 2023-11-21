@@ -14,7 +14,8 @@ export const DEFAULT_COLORS = [
 export const SHOW_VALID_QUESTIONS = true;
 export const VALID_QUESTIONS = [
 	'Count the causa',
-	'list the gruppo and their count'
+	'list the gruppo and their count',
+	'get the average of the Durata for each Gruppo'
 ];
 
 export const gridJSOptions = {

@@ -105,13 +105,69 @@ addTableSchema = cached(addTableSchema)
 
 def addAliases(query : str) -> str:
 	for column in sqlglot.parse_one(query, dialect='tsql'):
-		cname = str(column)
+		cname : str = str(column)
 		pattern = r'[a-zA-Z0-9\(\)\[\]]+ (as|AS|aS|As) [a-zA-Z0-9\(\)\[\]]+'
-		m = re.match(pattern=pattern, string=cname)
+		m : (re.Match, None)= re.match(pattern=pattern, string=cname)
 		if m is None:
 			query = query.replace(cname, f'{cname} AS \'{cname}\'', 1)
 	return query
 
 addAliases = cached(addAliases)
+
+# +---------------------------------------------------------------------------------------------------------------+ #
+
+def braketAdjuster(s, idx=0) -> str:
+	keys : list[tuple[str, str]] = [
+		( '(', ')' ),
+		( '[', ']' ),
+	]
+	op : list[str] = []
+	cl : list[str] = []
+	repO : str = '{'
+	repC : str = '}'
+	defO : str = '§'
+	defC : str = 'ç'
+	if idx < len(keys):
+		for i, c in enumerate(s):
+			if c == keys[idx][0]:
+				op.append(i)
+				s = s[:i] + repO + s[i+1:]
+			elif c == keys[idx][1]:
+				s = s[:i] + repC + s[i+1:]
+				cl.append(i)
+
+		if s.count(repO) == s.count(repC):
+			return braketAdjuster(s, idx+1)
+		else:
+			ns = []
+			for i, c in enumerate(s):
+				if c == repO:
+					ns.append(i)
+				elif c == repC:
+					if len(ns) >= 1:
+						ti = ns.pop()
+						s = s[:ti] + keys[idx][0] + s[ti+1:]
+						s = s[:i] + keys[idx][1] + s[i+1:]
+						s = s.replace(repO, defO)
+						s = s.replace(repC, defC)
+			return braketAdjuster(s, idx+1)
+	replacers = ( '(', ')' )
+	s = s.replace(defO, replacers[0])
+	s = s.replace(defC, replacers[1])
+	return s
+
+braketAdjuster = cached(braketAdjuster)
+
+# +---------------------------------------------------------------------------------------------------------------+ #
+
+
+
+# +---------------------------------------------------------------------------------------------------------------+ #
+
+
+
+# +---------------------------------------------------------------------------------------------------------------+ #
+
+
 
 # +---------------------------------------------------------------------------------------------------------------+ #
