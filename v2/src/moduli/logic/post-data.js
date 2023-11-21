@@ -1,4 +1,5 @@
 import { AI_ENDPOINT, CONVERT_TO_DANFO } from "../config";
+import { MyCard } from "../ui/cardClass";
 const userInput = document.getElementById('user-question');
 
 export async function fetchData() {
@@ -39,6 +40,7 @@ function parsedData(inputData) {
 		metadata,
 		data: (CONVERT_TO_DANFO) ? new dfd.DataFrame(data) : data,
 	}
+	BetterDom.archive.currentCard = new MyCard(BetterDom.archive.result)
 	const ct = document.querySelector('div.tab-content div.active').getAttribute('chartType');
 	MyEvent.emit('init-charts', BetterDom.archive.result, ct);
 }

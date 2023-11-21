@@ -30,9 +30,21 @@ export class MyCard {
 		this.tag1 = new Tag('div')
 			.html(this.template1).appendTo(this.parent1);
 		// this.tag2 = new Tag('div').html(this.template2);
+
+		this.export();
 	}
 
 	export() {
+		// { perf, query, question, metadata, data }
+		const { query, question } = this._config;
+		console.log(IDFromString(query.toLowerCase()), query)
+		const key = `saved_queries`;
+		let previousSavedQueries = JSON.parse(MyStorage.get(key) || '[]');
+		let storeObject = { query, question };
+		if (!previousSavedQueries.map((i) => { return i.question }).includes(question)) {
+			previousSavedQueries.push(storeObject);
+			MyStorage.add(key, JSON.stringify(previousSavedQueries));
+		}
 		return this._config;
 	}
 
@@ -41,4 +53,4 @@ export class MyCard {
 	}
 }
 
-BetterDom.archive.x = new MyCard({});
+// BetterDom.archive.x = new MyCard({});
